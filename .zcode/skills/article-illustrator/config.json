@@ -1,0 +1,9 @@
+{
+  "environment": {
+    "conda_python": "D:\\Development\\miniconda3\\python.exe"
+  },
+  "illustration": {
+    "image_backend": "gaoding",
+    "fallback_to_agnes": false
+  }
+}

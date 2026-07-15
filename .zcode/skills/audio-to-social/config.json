@@ -1,0 +1,68 @@
+{
+  "schema_version": "audio-to-social-v4",
+  "brand": {
+    "name": "AINews",
+    "storage_root": "E:\\Projects\\AI\\AINews"
+  },
+  "platforms": {
+    "default_target": [
+      "gongzhonghao",
+      "boker"
+    ],
+    "boker_next_episode": 1
+  },
+  "content": {
+    "default_style": "auto",
+    "default_visual_preset": "auto"
+  },
+  "source": {
+    "fetcher": "baoyu-url-to-markdown",
+    "youtube_transcript_languages": [
+      "zh",
+      "en"
+    ],
+    "download_source_media": "ask"
+  },
+  "tts": {
+    "provider": "mimo",
+    "voice": "苏打",
+    "model": "mimo-v2.5-tts-voiceclone",
+    "clone": true,
+    "style": null,
+    "ref_audio": null
+  },
+  "cover": {
+    "provider": "gaoding",
+    "model": "agnes-image-2.1-flash",
+    "gaoding_model": "万相2.7",
+    "jimeng_model": "图片 4.7",
+    "type": "auto",
+    "palette": "auto",
+    "rendering": "auto",
+    "text": "none",
+    "mood": "auto"
+  },
+  "image": {
+    "output_format": "png",
+    "quality": 80,
+    "cover_size": "900x383",
+    "illustration_size": "1920x1080"
+  },
+  "publishing": {
+    "wechat_account": "",
+    "boker_account": "",
+    "preflight_always": true,
+    "html_theme": "github"
+  },
+  "environment": {
+    "conda_python": "D:\\Development\\miniconda3\\python.exe",
+    "ffmpeg": "ffmpeg",
+    "font": "C:\\Windows\\Fonts\\msyh.ttc",
+    "mimo_api_key_env": "MIMO_API_KEY",
+    "whisper_model": "large-v3-turbo",
+    "whisper_batch_size": 16,
+    "whisper_language": "zh",
+    "whisper_initial_prompt": "以下是普通话的句子。",
+    "max_factcheck_rewrites": 2
+  }
+}

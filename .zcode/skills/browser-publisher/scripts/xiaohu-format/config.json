@@ -1,0 +1,30 @@
+{
+  "_comment": "xiaohu-wechat-format 配置。被 browser-publisher 的 md-to-wechat-html-xiaohu.py 适配层通过 subprocess 调用 format.py 时加载。output_dir 用系统 temp 避免污染项目;实际每次运行的输出目录由适配层通过 --output 参数覆盖。",
+  "output_dir": "/tmp/xiaohu-wechat-format",
+  "vault_root": ".",
+  "image_search_paths": [],
+  "settings": {
+    "default_theme": "github",
+    "auto_open_browser": false,
+    "header_author_label": ""
+  },
+  "wechat": {
+    "app_id": "",
+    "app_secret": "",
+    "author": ""
+  },
+  "cover": {
+    "output_dir": "",
+    "image_generation_script": ""
+  },
+  "smart_api": {
+    "base_url": "",
+    "api_key": "",
+    "model": ""
+  },
+  "ai": {
+    "url": "",
+    "api_key": "",
+    "model": ""
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "schema_version": "article-studio-v1",
+  "default_article_type": "opinion",
+  "default_source_mode": "stance_research",
+  "source_modes": ["stance_research", "transcript"],
+  "article_types": ["opinion", "howto", "story", "news", "profile", "review"],
+  "content": {
+    "title_min_chars": 15,
+    "title_max_chars": 30,
+    "digest_max_chars": 120,
+    "body_min_chars": 900,
+    "body_max_chars": 2000,
+    "min_sections": 2,
+    "max_sections": 4,
+    "max_para_chars": 120
+  },
+  "type_content_overrides": {
+    "howto": { "min_sections": 3, "body_max_chars": 3000 },
+    "story": { "body_max_chars": 3000, "min_sections": 1 },
+    "news": { "max_sections": 8, "body_max_chars": 3000 },
+    "profile": { "body_max_chars": 3000, "min_sections": 3 },
+    "review": { "min_sections": 3, "body_max_chars": 3000 }
+  },
+  "evaluation": {
+    "max_fix_rounds": 3,
+    "pass_bar": {
+      "min_per_dimension": 7,
+      "min_overall": 7.0
+    },
+    "reviewers": {
+      "content_editor": {
+        "agent": "agents/content-editor.md",
+        "dimensions": ["structure", "accuracy", "voice", "format", "honesty"],
+        "scorecard_pattern": "scorecards/content-round-{N}.json",
+        "hard_block_on": ["redline", "fidelity", "any_dimension_below_bar"]
+      },
+      "reader": {
+        "agent": "agents/reader.md",
+        "dimensions": ["reading_experience", "takeaway", "engagement"],
+        "scorecard_pattern": "scorecards/reader-round-{N}.json",
+        "hard_block_on": ["reading_experience_below_bar", "engagement_below_bar"]
+      }
+    },
+    "hard_block_redlines": true,
+    "scorecard_dir": "scorecards"
+  },
+  "research": {
+    "search_engine": "WebSearch",
+    "reader_tool": "mcp__web_reader__webReader",
+    "max_sources_per_claim": 3,
+    "require_source_url": true,
+    "require_retrieval_date": true
+  },
+  "transcript_mode": {
+    "comment": "source_mode=transcript 时的约束。转录文本是唯一权威源，零联网、零外部事实，反杜撰锚点=文章任何事实断言须可回溯到转录文本。",
+    "allow_web_research": false,
+    "fidelity_source": "transcript",
+    "source_label": "源转录",
+    "require_source_url": false,
+    "illustration_placeholders": { "min": 2, "max": 4 }
+  },
+  "environment": {
+    "conda_python": "D:\\Development\\miniconda3\\python.exe",
+    "a2s_skill_dir": "../audio-to-social",
+    "validate_script": "../audio-to-social/scripts/validate_content_quality.py",
+    "backup_script": "../audio-to-social/scripts/backup_file.py",
+    "brand_config": "../audio-to-social/references/brand-config.md"
+  },
+  "archive": {
+    "root": "articles",
+    "use_series_prefix": false,
+    "use_version_suffix": false
+  }
+}

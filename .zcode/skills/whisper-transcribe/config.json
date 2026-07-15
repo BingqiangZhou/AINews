@@ -1,0 +1,7 @@
+{
+  "python_executable": "D:\\Development\\miniconda3\\python.exe",
+  "ffmpeg_path": "ffmpeg",
+  "ffprobe_path": "ffprobe",
+  "default_timeout": 30,
+  "default_whisper_model": "large-v3-turbo"
+}

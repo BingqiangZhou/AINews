@@ -1,0 +1,24 @@
+# ===== 运行时产物（每次日报生成的文章/封面/播客/视频）=====
+articles/
+
+# ===== 凭证与运行时缓存（含密钥/登录态，禁止入库）=====
+# 微信公众号 access_token 缓存 + 发布历史
+.zcode/skills/browser-publisher/configs/browser-auth/
+
+# RSS 采集增量游标（运行时状态，每次运行自动重写）
+configs/ai-news-digest/state.json
+
+# ===== Python 缓存 =====
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# ===== ZCode 会话产物 =====
+.zcode/plans/
+.zcode/sessions/
+
+# ===== 编辑器/系统 =====
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

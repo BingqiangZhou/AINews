@@ -1,0 +1,12 @@
+{
+  "platforms": ["xiaohongshu", "douyin", "wechat_mp", "wechat_channels", "ximalaya"],
+  "rateLimit": {
+    "maxPostsPerDay": 3,
+    "minIntervalMinutes": 60
+  },
+  "wechat_mp": {
+    "appid_env": "WECHAT_MP_APPID",
+    "appsecret_env": "WECHAT_MP_APPSECRET",
+    "author": "Bingqiang Zhou"
+  }
+}
