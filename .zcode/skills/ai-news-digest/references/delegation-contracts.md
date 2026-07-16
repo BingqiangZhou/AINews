@@ -76,7 +76,7 @@
 
 ## Phase 7b — 插图：委派 `article-illustrator`（两步：prepare + render）
 
-> **由 `config.media.illustrations_enabled` 控制，日报默认关闭**。清单是可扫读文本，插图增益低且每张需 Gaoding 浏览器自动化；用户可在 Phase 4 门禁后显式开启。插图关闭时 Phase 7c 播客不再依赖 segments.json（见 7c 前置条件）。
+> **由 `config.media.illustrations_enabled` 控制，日报默认关闭**。清单是可扫读文本，插图增益低且每张需 Gaoding 浏览器自动化；用户可在启动前通过 `config.media.illustrations_enabled` 或对话显式开启。插图关闭时 Phase 7c 播客不再依赖 segments.json（见 7c 前置条件）。
 
 **职责**：决定插图位置+内容并生成图片。拆成两步委派，消除 conductor 与 segments.json 的隐藏竞态（Phase 7c 的 conductor 依赖 segments.json）。
 
@@ -161,7 +161,7 @@ article-to-solo-podcast 自动读：
 
 ## Phase 7d — 视频：委派 `article-to-video`（顺序 CLI）
 
-> **由 `config.media.video_enabled` 控制，日报默认关闭**。视频 5 阶段 ffmpeg + Whisper 重转录，对清单价值最低，且依赖插图做画面（插图也默认关）。用户可在 Phase 4 门禁后显式开启（需同时开插图）。
+> **由 `config.media.video_enabled` 控制，日报默认关闭**。视频 5 阶段 ffmpeg + Whisper 重转录，对清单价值最低，且依赖插图做画面（插图也默认关）。用户可在启动前通过 `config.media.video_enabled` 或对话显式开启（需同时开插图）。
 
 **职责**：文章+插图+封面+播客音频 → 16:9 视频（Ken Burns + 烧录字幕）。无 agents、无交互，纯 5 阶段 CLI。
 
