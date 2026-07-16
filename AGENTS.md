@@ -1,11 +1,12 @@
 # AGENTS.md — AINews workspace
 
-ZCode **skills workspace** (not a traditional code project). An end-to-end content automation pipeline: RSS AI-news sources → rule prefilter → model scoring → factual material → article → podcast → video → draft-publish to 3 platforms (WeChat 公众号 / 喜马拉雅 boker / 抖音 douyin). There is **no build / lint / test step** — each skill ships its own Python scripts invoked directly via the conda Python.
+A **Claude Code / ZCode plugin** (`ainews-pipeline`) packaged for distribution via GitHub. An end-to-end content automation pipeline: RSS AI-news sources → rule prefilter → model scoring → factual material → article → podcast → video → draft-publish to 3 platforms (WeChat 公众号 / 喜马拉雅 boker / 抖音 douyin). There is **no build / lint / test step** — each skill ships its own Python scripts invoked directly via the conda Python.
 
 ## Layout
 
 ```
-.zcode/skills/        ← the actual "code": the skill library (read SKILL.md first in each)
+.claude-plugin/       ← Claude Code plugin manifest (plugin.json + marketplace.json + hooks/)
+skills/               ← the actual "code": the skill library (read SKILL.md first in each)
 configs/              ← runtime config & data (tracked, except state.json)
   bestblogs-sources/  ← sources.json + sources.md (1686 RSS feeds, AI category ~170+)
   ai-news-digest/     ← state.json (RSS incremental cursor; gitignored)
@@ -39,10 +40,10 @@ Each skill folder follows the same shape: `SKILL.md` (frontmatter + flow) + `con
 
 ## Command & runtime conventions
 
-- **`<py>` = `D:\Development\miniconda3\python.exe`** — always use this; never assume `python` on PATH is correct. Read from each skill's `config.environment.conda_python`.
-- Scripts are run as `<py> .zcode/skills/<skill>/scripts/<x>.py ...` with absolute or repo-relative paths.
-- ffmpeg = `ffmpeg`; font = `C:\Windows\Fonts\msyh.ttc` (Chinese). Paths are Windows; the repo runs on win32.
-- **Secrets are env vars only** (`WECHAT_MP_APPID`, `WECHAT_MP_APPSECRET`, `MIMO_API_KEY`, `AGNES_API_KEY`); never committed. Browser login state lives under `browser-publisher/configs/browser-auth/` (gitignored).
+- **`<py>` = the Python interpreter resolved by the plugin.** Resolution order: env var `AINews_PYTHON` → each skill's `config.environment.conda_python` (or `python_executable`) → `python` on PATH. In Claude Code this is auto-populated from the plugin's `conda_python` userConfig via the `SessionStart` hook. Never assume a hardcoded absolute path.
+- Scripts are run as `<py> skills/<skill>/scripts/<x>.py ...` with absolute or repo-relative paths (CWD = repo root).
+- ffmpeg resolves via `AINews_FFMPEG` → `config.*.ffmpeg_path` → `ffmpeg` on PATH; CJK subtitle font via `AINews_FONT` → `config.font` → platform default. Paths are Windows; the repo runs on win32.
+- **Secrets are env vars only** (`WECHAT_MP_APPID`, `WECHAT_MP_APPSECRET`, `MIMO_API_KEY`, `AGNES_API_KEY`); never committed. Browser login state lives under `skills/browser-publisher/configs/browser-auth/` (gitignored).
 - **Dates = today, Beijing time (UTC+8)**, `YYYY-MM-DD`. Event dates come from RSS `published`; if missing, mark "（具体日期未公布）" — never fabricate.
 - Invoke a skill via its slash command, e.g. `/ai-news-digest`.
 
@@ -67,3 +68,13 @@ Each skill folder follows the same shape: `SKILL.md` (frontmatter + flow) + `con
 - Editing orchestrator flow / state → `ai-news-digest/references/state-schema.md`, `delegation-contracts.md`, and `agents/_shared.md` (paths, return format, error codes, anti-fabrication).
 - Editing a skill → its `SKILL.md` first, then its `references/` (loaded on demand, listed under each skill's "按需加载").
 - Publishing → `browser-publisher/references/{platform}.md` + `ai-news-digest/references/publishing.md` (filename adapters, e.g. `_video/公众号_视频.mp4` → `抖音_短视频.mp4`, and the 抖音 文案 format).
+
+## Release flow (versioning + CHANGELOG + GitHub Release)
+
+One-shot, locally-triggered: the `/release` skill (`.zcode/skills/release/SKILL.md`, a maintenance tool — **not** part of the published plugin's `skills/`) orchestrates everything; CI only auto-creates the GitHub Release from a pushed tag.
+
+- **Trigger**: `/release` (or ask "发布 / release / 发版 / 打 tag / 生成 changelog / 更新版本").
+- **Version source**: git tag `vX.Y.Z` is canonical, and `.claude-plugin/plugin.json`'s `version` field is **kept in sync** with it on each release (drop the `v` prefix). `marketplace.json` has no version field — leave it. Commit messages use **conventional commits** (`feat`/`fix`/`refactor`/`docs`/...); `git-cliff` parses them via `cliff.toml` (full commit_parsers + `<!-- AI_SUMMARY -->` placeholder that the skill replaces with a 2-3 sentence summary).
+- **Flow**: skill → preview changes & wait for confirmation → `git cliff` regenerates/prepends `CHANGELOG.md` → bump `plugin.json` version → commit → `git tag -a <VERSION>` → `git push origin HEAD --tags`.
+- **CI**: `.github/workflows/release.yml` triggers on `push: tags: ['v*']`, slices the matching `## <TAG>` section out of `CHANGELOG.md` with awk, and creates the GitHub Release via `softprops/action-gh-release@v2` (no build artifacts — source-only repo).
+- **First release**: no tags exist yet. First cut defaults to `v<plugin.json version>` (currently `v1.0.0`), treating the already-migrated 11 skills as the initial release; CHANGELOG is then generated from the repo's initial commit.
