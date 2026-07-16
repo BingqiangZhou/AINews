@@ -3,7 +3,16 @@ articles/
 
 # ===== 凭证与运行时缓存（含密钥/登录态，禁止入库）=====
 # 微信公众号 access_token 缓存 + 发布历史
-.zcode/skills/browser-publisher/configs/browser-auth/
+skills/browser-publisher/configs/browser-auth/
+
+# ===== 本机配置覆盖（机器相关绝对路径，禁止入库）=====
+# 每个 skill 可有 config.local.json 覆盖 config.json 里的路径字段（conda_python/ffmpeg_path/storage_root 等）
+skills/*/config.local.json
+
+# ===== 生物特征资产（voice-clone 参考音频，禁止入库）=====
+# voice_ref.wav 是 TTS 声音克隆的参考音频（可能是作者本人声音）。
+# 用户若要用 --clone 模式，自行放置到 skills/<skill>/scripts/voice_ref.wav 或用 --ref 指定。
+skills/*/scripts/voice_ref.wav
 
 # RSS 采集增量游标（运行时状态，每次运行自动重写）
 configs/ai-news-digest/state.json

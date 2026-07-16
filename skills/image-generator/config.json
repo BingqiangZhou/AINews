@@ -1,0 +1,16 @@
+{
+  "conda_python": "python",
+  "base_url": "https://apihub.agnes-ai.com/v1",
+  "default_image_model": "agnes-image-2.1-flash",
+  "env_var": "AGNES_API_KEY",
+  "chrome_download_dir": "",
+  "backend": {
+    "provider": "gaoding",
+    "gaoding_model": "万相2.7",
+    "jimeng_model": "图片 4.7",
+    "fallback_to_agnes": false,
+    "pollinations_model": "flux",
+    "pollinations_base": "https://image.pollinations.ai",
+    "pollinations_note": "双 key 轮换（POLLINATIONS_API_KEY_sick-snake/precise-koi）；按小时配额，402 停"
+  }
+}

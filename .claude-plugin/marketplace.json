@@ -1,0 +1,13 @@
+{
+  "name": "ainews-pipeline-marketplace",
+  "owner": { "name": "Bingqiang Zhou" },
+  "plugins": [
+    {
+      "name": "ainews-pipeline",
+      "source": "./",
+      "description": "End-to-end AI-news content automation pipeline: RSS -> score -> article -> podcast -> video -> publish.",
+      "homepage": "https://github.com/BingqiangZhou/AINews",
+      "license": "MIT"
+    }
+  ]
+}

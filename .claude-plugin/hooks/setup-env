@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# setup-env — Claude Code SessionStart hook (bash portion).
+#
+# Reads plugin userConfig values (injected by Claude Code as CLAUDE_PLUGIN_OPTION_*
+# env vars) and writes exports into $CLAUDE_ENV_FILE so that every subsequent
+# Bash command — including Python script invocations from skills — sees them.
+#
+# On Windows, setup-env.cmd locates bash then execs this file.
+# On Unix/Git-Bash, setup-env.cmd's batch block is a no-op heredoc and this
+# file's bash body runs directly.
+#
+# Env-var contract consumed by skills (Python reads via os.environ.get with
+# config.json fallbacks):
+#   AINews_PYTHON  <- userConfig.conda_python (default "python")
+#   AINews_FFMPEG   <- userConfig.ffmpeg_path  (default "ffmpeg")
+#   AINews_FFPROBE  <- derived: same dir as ffmpeg, ffprobe name
+#   AINews_FONT     <- userConfig.font_path    (default "")
+
+set -u
+
+[ -z "${CLAUDE_ENV_FILE:-}" ] && exit 0
+
+emit() {
+  # $1 = value, $2 = target env var, $3 = sentinel-default to skip when equal
+  [ -n "$1" ] && [ "$1" != "$3" ] && printf 'export %s=%q\n' "$2" "$1" >> "$CLAUDE_ENV_FILE"
+}
+
+emit "${CLAUDE_PLUGIN_OPTION_CONDA_PYTHON:-}" AINews_PYTHON python
+emit "${CLAUDE_PLUGIN_OPTION_FFMPEG_PATH:-}"  AINews_FFMPEG  ffmpeg
+emit "${CLAUDE_PLUGIN_OPTION_FONT_PATH:-}"    AINews_FONT    ""
+
+# Derive ffprobe sibling (same dir as ffmpeg, if a custom ffmpeg path was given)
+if [ -n "${CLAUDE_PLUGIN_OPTION_FFMPEG_PATH:-}" ] && [ "${CLAUDE_PLUGIN_OPTION_FFMPEG_PATH:-}" != "ffmpeg" ]; then
+  _ffdir="$(dirname "$CLAUDE_PLUGIN_OPTION_FFMPEG_PATH" 2>/dev/null)"
+  if [ -x "$_ffdir/ffprobe" ]; then
+    printf 'export AINews_FFPROBE=%q\n' "$_ffdir/ffprobe" >> "$CLAUDE_ENV_FILE"
+  fi
+fi
+
+exit 0

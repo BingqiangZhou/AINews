@@ -1,0 +1,31 @@
+{
+  "name": "ainews-pipeline",
+  "version": "1.0.0",
+  "description": "End-to-end AI-news content automation: RSS -> score -> article -> podcast -> video -> publish to WeChat MP / Ximalaya / Douyin.",
+  "author": { "name": "Bingqiang Zhou" },
+  "homepage": "https://github.com/BingqiangZhou/AINews",
+  "repository": "https://github.com/BingqiangZhou/AINews",
+  "license": "MIT",
+  "keywords": ["rss", "ai-news", "content-automation", "wechat", "podcast", "video"],
+  "skills": "./skills/",
+  "userConfig": {
+    "conda_python": {
+      "type": "file",
+      "title": "Python interpreter (optional)",
+      "description": "Absolute path to Python (conda/miniconda). Leave blank to use 'python' on PATH.",
+      "default": "python"
+    },
+    "ffmpeg_path": {
+      "type": "file",
+      "title": "FFmpeg executable (optional)",
+      "description": "Absolute path to ffmpeg. Leave blank to use 'ffmpeg' on PATH.",
+      "default": "ffmpeg"
+    },
+    "font_path": {
+      "type": "file",
+      "title": "CJK font file (optional)",
+      "description": "Path to a CJK-capable .ttc/.ttf for video subtitles (e.g. msyh.ttc on Windows). Leave blank for auto-detect.",
+      "default": ""
+    }
+  }
+}

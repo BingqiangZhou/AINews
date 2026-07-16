@@ -1,12 +1,74 @@
 # AINews
 
-一条端到端的 AI 内容自动化流水线，由 11 个 ZCode skill 组成。每天把 RSS 信源采集的 AI 资讯，自动加工成**公众号文章 + 播客音频 + 横版视频**，并以草稿形式发布到**微信公众号 / 喜马拉雅 / 抖音**三平台。
+一条端到端的 AI 内容自动化流水线，打包为可通过 GitHub 安装的 **Claude Code / ZCode 插件**（插件名 `ainews-pipeline`，含 11 个 skill）。每天把 RSS 信源采集的 AI 资讯，自动加工成**公众号文章 + 播客音频 + 横版视频**，并以草稿形式发布到**微信公众号 / 喜马拉雅 / 抖音**三平台。
 
 ```
 RSS 信源 → 规则预筛 → 模型打分 → 事实素材 → 公众号文章 → 封面+插图+播客+视频 → 三平台草稿
 ```
 
-> ⚠️ 本仓库不是传统代码项目，而是 **ZCode skills 工作区**——没有 build/lint/test 流程。每个 skill 自带 Python 脚本，由 conda Python 直接调用。给 agent 看的架构与约定见 [`AGENTS.md`](AGENTS.md)，本 README 面向使用者。
+> ⚠️ 本仓库不是传统代码项目，而是 **Claude Code / ZCode 插件**——没有 build/lint/test 流程。每个 skill 自带 Python 脚本，由 Python 解释器直接调用。给 agent 看的架构与约定见 [`AGENTS.md`](AGENTS.md)，安装说明见下方 [安装](#安装)，本 README 面向使用者。
+
+---
+
+## 安装
+
+本仓库本身就是一个 Claude Code plugin marketplace（`.claude-plugin/marketplace.json` 指向自身）。两种安装方式：
+
+### 方式一：Claude Code / ZCode（推荐）
+
+在本仓库根目录或任意项目里：
+
+```bash
+# 1. 把本仓库注册为 marketplace
+claude plugin marketplace add https://github.com/BingqiangZhou/AINews.git
+
+# 2. 安装插件（会在 /plugin 菜单里出现 ainews-pipeline）
+claude plugin install ainews-pipeline@ainews-pipeline-marketplace
+```
+
+安装/启用时，Claude Code 会弹出 **userConfig** 配置框，填三项（均可留空走默认）：
+
+| 配置项 | 作用 | 留空时的默认 |
+|--------|------|-------------|
+| `conda_python` | Python 解释器绝对路径（conda/miniconda） | `python`（用 PATH 上的） |
+| `ffmpeg_path` | ffmpeg 可执行文件绝对路径 | `ffmpeg`（用 PATH 上的） |
+| `font_path` | CJK 字体文件（视频字幕用，如 `msyh.ttc`） | 留空=按平台自动选 |
+
+填好后，插件的 `SessionStart` 钩子会把这些值注入 `CLAUDE_ENV_FILE`，所有 skill 的 Python 脚本通过 `AINews_PYTHON` / `AINews_FFMPEG` / `AINews_FFPROBE` / `AINews_FONT` 环境变量读取。**无需手改任何 config.json。**
+
+### 方式二：非 Claude Code 用户（手动跑 / 纯 ZCode）
+
+```bash
+git clone https://github.com/BingqiangZhou/AINews.git
+cd AINews
+```
+
+机器相关路径走环境变量（在 shell 里 export，或写进 `.envrc`/系统环境变量）：
+
+```bash
+export AINews_PYTHON="D:/Development/miniconda3/python.exe"   # 可选，默认 python
+export AINews_FFMPEG="ffmpeg"                                  # 可选，默认 ffmpeg
+export AINews_FONT="C:/Windows/Fonts/msyh.ttc"                 # 可选，视频字幕用
+```
+
+或者固定到某个 skill：把 `skills/<skill>/config.json` 复制为 `skills/<skill>/config.local.json`（已 gitignored）再编辑里面的 `conda_python`/`ffmpeg_path`/`font` 等字段。
+
+### 必装系统依赖
+
+- **Python 3.10+**（conda/miniconda 推荐）
+- **ffmpeg**（含 ffprobe）——视频/音频处理必需
+- **CJK 字体**——视频字幕烧录用（Windows: `msyh.ttc`；macOS: PingFang；Linux: Noto Sans CJK）
+- **conda / pip 依赖**：每个 skill 的 `scripts/` 按需 `import`（`feedparser`、`faster-whisper`、`PIL`、`requests` 等），首次跑缺什么装什么即可
+
+### 必填密钥（发布用，环境变量）
+
+| 变量 | 用途 |
+|------|------|
+| `WECHAT_MP_APPID` / `WECHAT_MP_APPSECRET` | 微信公众号草稿 API |
+| `MIMO_API_KEY` | MiMo TTS |
+| `AGNES_API_KEY` | Agnes 图像 API |
+
+浏览器登录态（喜马拉雅/抖音等）存于 `skills/browser-publisher/configs/browser-auth/`（gitignored），首次发布时浏览器交互登录后会自动落盘。
 
 ---
 
@@ -116,9 +178,9 @@ articles/{YYYY-MM-DD}_AI日报/
 ## 环境与依赖
 
 ### 运行环境
-- **平台**：Windows（win32）
-- **Python**：`D:\Development\miniconda3\python.exe`（即 `<py>`，始终用此路径，绝不假设 PATH 上的 `python` 正确）
-- **ffmpeg / ffprobe**：需在 PATH（视频合成、音频处理用）
+- **平台**：Windows（win32，亦可在 macOS/Linux 运行）
+- **Python**：`<py>` = 插件解析的解释器（`AINews_PYTHON` 环境变量 → 各 skill `config.environment.conda_python` → `python`）。Claude Code 下由 userConfig 自动注入。
+- **ffmpeg / ffprobe**：`AINews_FFMPEG`/`AINews_FFPROBE` 环境变量 → config → PATH 上的 `ffmpeg`/`ffprobe`（视频合成、音频处理用）
 - **Chrome**：由 chrome-devtools MCP 自动启动并管理登录态（图像生成 + 浏览器发布依赖）
 - **Whisper**：推荐 CUDA GPU 加速（CPU 可用但慢）
 
@@ -136,8 +198,8 @@ articles/{YYYY-MM-DD}_AI日报/
 
 ## 快速开始
 
-1. **安装 ZCode** 并克隆本仓库。
-2. **配置环境变量**（见上表）+ 在各 skill 的 `config.json` 里设好本机路径（`conda_python`、`chrome_download_dir` 等）。
+1. **安装插件**：按上方 [安装](#安装) 任一方式装好（Claude Code 用户 `claude plugin install`；手动用户 `git clone` + 设置 `AINews_PYTHON` 等环境变量）。
+2. **配置环境变量**（见上表）——Claude Code 用户在 `/plugin` userConfig 里填，手动用户 export `AINews_PYTHON`/`AINews_FFMPEG` 等。
 3. **登录浏览器**：在 Chrome 里登录稿定 / 即梦 / 公众号 / 喜马拉雅 / 抖音。
 4. **跑日报**：
    ```
@@ -164,7 +226,8 @@ articles/{YYYY-MM-DD}_AI日报/
 
 ```
 .
-├── .zcode/skills/          # 11 个 skill（SKILL.md + config.json + scripts/ + references/ + agents/）
+├── .claude-plugin/         # Claude Code / ZCode 插件清单（plugin.json + marketplace.json + hooks/）
+├── skills/                 # 11 个 skill（SKILL.md + config.json + scripts/ + references/ + agents/）
 ├── configs/                # 运行时配置与数据（tracked，state.json 除外）
 │   ├── bestblogs-sources/  # RSS 信源表（1686 条）+ 可读索引
 │   └── ai-news-digest/     # RSS 增量游标 state.json（gitignored）
