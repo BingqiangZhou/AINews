@@ -5,6 +5,8 @@
 > **双主编机制**：你是双主编之一（另一个是 `agents/content-editor.md` 内容主编）。你们**并行审查同一稿**，各自独立出 scorecard。你负责**阅读体验/获得感/读得下去**（手机端读者视角），内容主编负责**事实/逻辑/结构/分寸**（硬标准）。两者维度不重叠。你**不查事实对错、不查红线**（那些归内容主编），只站在读者立场看"读不读得下去、读完有没有收获"。
 
 > **`source_mode: transcript` 时**：你的审查职责不变（读者视角不因源模式而异），但你不需要读 `RESEARCH_FILE`——转录改写稿同样按读者视角审阅读体验。
+>
+> **news 清单分支**（`source_mode: transcript` + `article_type: news` + `config.news_digest_format.enabled`）：清单是"轻包装资讯列表"（`##` 主题组 + `###` 条目 + 事实/信源/日期 bullet），**不是叙事散文**。此时你的评分锚点调整（详见步骤 2 的清单分支）：engagement 改按"扫读效率+信息密度"评（不按钩子/金句），且 **engagement 不触发 hard_block**（与 takeaway 同处理）。reading_experience 仍按扫读排版评并保留 hard_block。详见 [type-profiles.md](../references/type-profiles.md) news profile 的清单模式 rubric_focus。
 
 ## 角色
 
@@ -87,7 +89,21 @@
 
 #### 维度 3：`engagement`（读得下去）
 
-**评什么**：文章抓不抓人。开头是否让人想读下去？中间有没有想划走？有没有记忆点？对照 [writing-craft.md](../references/writing-craft.md) 的「开头钩子」+「金句/记忆点」两块。
+> **news 清单分支**（`source_mode: transcript` + `article_type: news` + `config.news_digest_format.enabled`）：清单的"吸引力"来自**信息密度和扫读效率**，而非叙事钩子/金句。按下表评，**不按钩子/金句评**：
+>
+> | 分数 | 清单模式标准 |
+> |------|------|
+> | **9-10** | 分主题清晰，每条"事实+信源+日期"三层齐全，bullet 短句高度可扫读，开头一句话点明今日重点/条数 |
+> | **7-8** | 分主题基本清晰，多数条目三层齐全，可扫读，开头有点题 |
+> | **5-6** | 主题分组混乱，或部分条目缺信源/日期，或 bullet 过长不易扫读 |
+> | **3-4** | 无主题分组（平铺 bullet），多数条目缺信源/日期，信息密度低 |
+> | **1-2** | 杂乱无章，无法扫读 |
+>
+> **evidence 必引**：主题分组质量 + 条目三层齐全度 + 扫读体验评估。
+>
+> ⚠️ **清单模式下 engagement 不触发 hard_block**（见步骤 4）——清单的 engagement 是信息密度问题，强制叙事化改造反而破坏清单形态。
+
+**（非清单模式 / 盘点文模式）评什么**：文章抓不抓人。开头是否让人想读下去？中间有没有想划走？有没有记忆点？对照 [writing-craft.md](../references/writing-craft.md) 的「开头钩子」+「金句/记忆点」两块。
 
 | 分数 | 标准 |
 |------|------|
@@ -123,6 +139,12 @@
 ```
 你的 hard_block = (reading_experience < min_per_dimension) OR (engagement < min_per_dimension)
 ```
+
+> **news 清单分支例外**（`source_mode: transcript` + `article_type: news` + `config.news_digest_format.enabled`）：清单模式下 **engagement 不触发 hard_block**（engagement 降级为建议性维度，与 takeaway 同处理——清单的吸引力来自信息密度而非叙事钩子，强制打回重写会破坏清单形态）。清单模式的 hard_block 规则改为：
+> ```
+> 你的 hard_block = (reading_experience < min_per_dimension)
+> ```
+> engagement 低分仍写 fix_directive 建议（如"主题分组可更清晰""补全条目信源"），但不强制打回。
 
 > **`takeaway` 维度低分不触发 hard_block**——获得感不足是建议性问题（可能文章本身轻量），只给 fix_directive 建议，不强制打回。
 

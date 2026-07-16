@@ -37,6 +37,8 @@ ARTICLE_FILE
 
 合并后得到本篇文章的最终阈值，逐字段转成 CLI 参数（与本 skill 调用 `validate_content_quality.py` 的同名做法一致）。
 
+> ⚠️ **清单模式必须合并 `type_content_overrides.news`**（`body_min_chars: 400`）。脚本的 `body_min` 默认值是 900——若忘记合并，400 字的资讯清单会被 `gongzhonghao.body_length` 硬 fail 误杀。`source_mode: transcript` + `article_type: news` 时务必走 `type_content_overrides.news` 的阈值。
+
 ### 调用命令
 
 ```bash
@@ -53,6 +55,7 @@ ARTICLE_FILE
 
 > `--min-illustrations 0` 是因为本 skill 不生成插图（留给下游 `article-illustrator`），避免恒定 warning 噪声。
 > `{merged.X}` 由主 agent 在调用前按上一节"阈值合并"算出后替换为字面数字。
+> ⚠️ **`--max-sections` 不被脚本代码强制**（`validate_content_quality.py` 只检查 `min_sections`，不检查 max）。它仅作 LLM 审查参考——多几个 `##` 主题组不该硬 fail，由内容主编的 structure 维度软性把控。
 
 检查项（`--platform gongzhonghao`，阈值按合并后的）：
 - 标题：第一行 `# ` 开头，字数在合并后的 title 范围
@@ -63,7 +66,7 @@ ARTICLE_FILE
 - severity：error（必须清零）/ warning
 
 **额外检查**（本 skill 新增，主 agent 自行 grep）：
-- 无 Markdown `>` 引用块：`grep '^>' 公众号_文章.md` 必须无输出（继承 browser-publisher 公众号规范）
+- 无 Markdown `>` 引用块（**文末 AI 声明除外**）：`grep '^>' 公众号_文章.md | grep -vE 'AI 辅助|AI 生成|RSS 采集|转录改写|作者手写|整理排版'` 必须无输出。继承 browser-publisher 公众号规范（正文不得有 `>` 引用块），但清单/盘点/转录模式要求的文末 AI 生成声明（`>` 引用块样式）是合规的，排除掉不误报。
 
 ### 2a 失败处理
 
