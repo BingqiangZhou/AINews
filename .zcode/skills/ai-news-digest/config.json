@@ -30,9 +30,9 @@
   },
   "media": {
     "cover_enabled": true,
-    "illustrations_enabled": true,
+    "illustrations_enabled": false,
     "tts_podcast_enabled": true,
-    "video_enabled": true
+    "video_enabled": false
   },
   "platforms": {
     "gongzhonghao": {"enabled": true, "mode": "draft_only"},
