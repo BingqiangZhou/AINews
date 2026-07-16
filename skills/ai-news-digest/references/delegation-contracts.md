@@ -3,7 +3,7 @@
 > 本编排器把内容生产委派给 6 个下游 skill。本文件是**唯一的委派契约真源**——每个 skill 的精确输入字段、输出产物、调用方式、断点续跑语义、并行关系都在此定义。
 
 通用约定：
-- **项目根**：`articles/{YYYY-MM-DD}_AI日报/`（Phase 0 由本 skill 建立，与 audio-to-social 不同——audio-to-social 让 article-studio 建目录，本 skill 因采集阶段需先落中间产物故自建）。下文 `<article_dir>` = 该路径。
+- **项目根**：`articles/{YYYY-MM-DD}_AI日报/`（Phase 0 由本 skill 建立——因采集阶段需先落中间产物故自建，而非让 article-studio 建目录）。下文 `<article_dir>` = 该路径。
 - **`<py>`** = 插件解析的 Python 解释器（`AINews_PYTHON` 环境变量 → `config.environment.conda_python` → `python`）。
 - **`<scripts>`** = `skills/ai-news-digest/scripts`。
 - **`<a2s_scripts>`** = `skills/audio-to-social/scripts`（复用脚本）。
@@ -136,7 +136,7 @@
 |------|----|----|
 | `--input` | `<article_dir>/公众号_文章.md` | 文章（含插图引用无妨，ingest_article.py 会清洗） |
 
-> **委派指令（必须在委派说明里传达给下游 agent）**：`studio_mode: "fast_fallback"` —— 下游 article-to-solo-podcast agent 收到此指令后，**覆写其自身 config.json 的 `studio.enabled` 为 false**（该 config 默认 true，是为 audio-to-social 个人录音场景设的；资讯播报场景须覆写），走 solo-scriptwriter 单写手路径，不走 7-agent studio。
+> **委派指令（必须在委派说明里传达给下游 agent）**：`studio_mode: "fast_fallback"` —— 下游 article-to-solo-podcast agent 收到此指令后，**覆写其自身 config.json 的 `studio.enabled` 为 false**（该 config 默认 true，适合深度打磨的录音场景；资讯播报场景须覆写），走 solo-scriptwriter 单写手路径，不走 7-agent studio。
 
 article-to-solo-podcast 自动读：
 - `<article_dir>/imgs/segments.json`（Phase 7b-prepare 产出）
@@ -155,7 +155,7 @@ article-to-solo-podcast 自动读：
 
 ### 并行与集号
 与 Phase 7b-render（生图）**并行**委派（播客不依赖 PNG，只读文章和 segments.json）。
-**集号 claiming**：article-to-solo-podcast 会读集号；本编排器在 Phase 9 发布成功后才调 `bump_episode.py` 递增，期间集号不变。**与 audio-to-social 共享同一集号源，同一天不要同时跑两者**。
+**集号 claiming**：article-to-solo-podcast 会读集号；本编排器在 Phase 9 发布成功后才调 `bump_episode.py` 递增，期间集号不变。集号单一来源是 `audio-to-social/config.json`（共享资产枢纽）。
 
 ---
 

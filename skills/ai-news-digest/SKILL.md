@@ -48,7 +48,7 @@ metadata:
 3. **article-studio transcript 模式**：把抓取的资讯整理成带信源的事实素材文件，作为 article-studio 的唯一权威源（零外部事实）。article-studio 不再重新联网检索。
 4. **状态机 + 断点续跑**。`state.json` 是状态机唯一真源，每步完成即回写；恢复时跳过已完成步骤。
 5. **发布逻辑全部复用** `browser-publisher`，本 skill 不重写任何发布代码。
-6. **集号单一来源**：`audio-to-social/config.json` 的 `platforms.boker_next_episode`（与 audio-to-social 共享，同一天只跑一个）。
+6. **集号单一来源**：`audio-to-social/config.json` 的 `platforms.boker_next_episode`（`audio-to-social/` 现为共享资产枢纽）。
 
 ## 流程概览
 
@@ -259,7 +259,7 @@ Phase 6（文章）完成
              （插图关闭时无 segments.json 依赖，播客直接启动）
 ```
 
-**全量链路（插图/视频开）**——照搬 audio-to-social 时序：
+**全量链路（插图/视频开）**——封面/插图/播客并行，视频殿后：
 ```
 Phase 6（文章）完成
         │

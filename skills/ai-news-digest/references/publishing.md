@@ -80,7 +80,7 @@
 ```
 - 递增 `audio-to-social/config.json` 的 `boker_next_episode`。
 - 清空 `state.json.episode_number_claimed`。
-- **与 audio-to-social 共享集号源**——同一天不要同时跑两者，避免集号竞争。
+- 集号单一来源是 `audio-to-social/config.json`（`audio-to-social/` 为共享资产枢纽，非编排器）。
 
 ### 完成后
 - `state.json.publish.tracks.boker.status = "published"`，记 `episode_url`。

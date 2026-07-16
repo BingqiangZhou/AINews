@@ -28,7 +28,7 @@
 | 字段 | 类型 | 说明 |
 |------|------|------|
 | `name` | string | 品牌名（"AINews"） |
-| `storage_root` | string | 输出根目录（`articles/` 的父目录）。与 audio-to-social 共享同一值 |
+| `storage_root` | string | 输出根目录（`articles/` 的父目录）。默认空串 = 项目根 |
 
 ## sources
 

@@ -80,7 +80,6 @@
 
 ## 集号管理
 
-- **单一来源**：`audio-to-social/config.json` 的 `platforms.boker_next_episode`。
+- **单一来源**：`audio-to-social/config.json` 的 `platforms.boker_next_episode`（`audio-to-social/` 现为共享资产枢纽，非编排器）。
 - 本 skill 只读不写（写由 `bump_episode.py` 在 Phase 9b 发布成功后做）。
 - Phase 7c 播客开始前 claim 集号到 `state.json.episode_number_claimed`；Phase 9b 发布成功后递增并清空。
-- **与 audio-to-social 共享同一集号源，同一天不要同时跑两者**。

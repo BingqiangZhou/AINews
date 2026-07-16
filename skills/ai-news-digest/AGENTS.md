@@ -11,8 +11,6 @@ ZCode agents 进入本 skill 的入口说明。本 skill 是**纯编排器**（`
 
 其余 Phase 1-2、4 是确定性脚本（无 LLM 语义判断），Phase 5 是确定性转换脚本，Phase 6-9 委派下游 skill（各下游 skill 有自己的 agent 契约）。
 
-> 对比：audio-to-social v5 用 dispatch 内联子 agent（audio-engineer）；本 skill 的两个语义环节都由主 agent 直接做，更轻量。
-
 ## 数据流
 
 ```
@@ -45,7 +43,7 @@ Phase 5: build_research_md.py → _research/事实素材与来源.md  ← articl
 Phase 6: 委派 article-studio (transcript + news + AI小周) → 公众号_文章.md
         │
         ▼
-Phase 7: 并行委派（照搬 audio-to-social 时序）
+Phase 7: 并行委派（封面/插图/播客并行，视频殿后）
    7a 封面 / 7b 插图(prepare→render) / 7c 播客 / 7d 视频
         │
         ▼
