@@ -141,7 +141,7 @@
 - **archive**：`reconciliation`（一致性检查报告）、`compression`（压缩摘要）。
 
 ### episode_number_claimed
-- 本次运行占用的喜马拉雅集号（从 audio-to-social config 的 `boker_next_episode` 读）。
+- 本次运行占用的喜马拉雅集号（从 ai-news-digest config 的 `boker_next_episode` 读）。
 - Phase 7c 播客开始前 claim，Phase 9b 发布成功后由 `bump_episode.py` 递增并清空。
 - 崩溃恢复时：若 claimed 非空且对应集号未发布，复用同集号；避免集号空洞。
 
@@ -162,6 +162,6 @@
 
 ## 断点续跑不变量
 
-1. **集号单一来源**：`audio-to-social/config.json` 的 `platforms.boker_next_episode`。本 skill 只读不写（写由 `bump_episode.py` 在 Phase 9b 发布成功后做）。
+1. **集号单一来源**：`ai-news-digest/config.json` 的 `platforms.boker_next_episode`。本 skill 只读不写（写由 `bump_episode.py` 在 Phase 9b 发布成功后做）。
 2. **项目目录由 Phase 0 建**：采集阶段需先落 `temp/candidates_raw.json` 等中间产物，故 Phase 0 必须先建目录。
 3. **事实素材是文章的唯一权威源**：Phase 5 产出的 `_research/事实素材与来源.md` 是 Phase 6 article-studio transcript 模式的 source_file，不可被其它阶段覆盖。

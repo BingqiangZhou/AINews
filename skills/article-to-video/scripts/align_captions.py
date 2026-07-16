@@ -7,7 +7,7 @@ align_captions.py — 阶段 1：字幕对齐
 
 复用（只读，不修改）：
   - whisper-transcribe/scripts/transcribe-faster-whisper.py（subprocess）
-  - audio-to-social/scripts/lib/utils.py（importlib 按绝对路径加载，跨 skill 单一权威源）
+  - whisper-transcribe/scripts/lib/utils.py（经本 skill scripts/lib/utils.py 的 re-export shim 转发，跨 skill 单一权威源）
   - 本 skill scripts/lib/caption_align.py（import，内化自 highlight-render-hyperframes）
   - 本 skill scripts/generate-timeline-captions.py 的底层函数（importlib，内化自 highlight-render-hyperframes）
 
@@ -32,7 +32,7 @@ SCRIPTS_DIR = Path(__file__).resolve().parent  # 本 skill scripts/
 WHISPER_SCRIPT = REPO_SKILLS / "whisper-transcribe" / "scripts" / "transcribe-faster-whisper.py"
 GTC_PATH = SCRIPTS_DIR / "generate-timeline-captions.py"
 
-# utils 经本地 lib/utils.py 的 re-export shim 指向 audio-to-social 的单一权威源
+# utils 经本地 lib/utils.py 的 re-export shim 指向 whisper-transcribe 的单一权威源
 # （AGENTS.md 的 shared-scripts hub）；caption_align 是本 skill 专有 vendoring。
 sys.path.insert(0, str(SCRIPTS_DIR))
 

@@ -3,15 +3,14 @@
 Cross-skill shared pipeline utilities (canonical source).
 
 This module is the single source of the pipeline utility surface. It lives in
-`audio-to-social` (the de-facto shared-scripts hub; see AGENTS.md "Config reuse
-points at audio-to-social") and is imported read-only by other skills:
+`whisper-transcribe/scripts/lib/` (its canonical home) and is imported by:
 
-  - whisper-transcribe/scripts/transcribe-faster-whisper.py
-  - article-to-video/scripts/align_captions.py
+  - whisper-transcribe/scripts/transcribe-faster-whisper.py (local `from lib.utils`)
+  - article-to-video/scripts/lib/utils.py (a re-export shim that loads this
+    module via importlib by absolute path — article-to-video keeps its own
+    `lib/caption_align.py`, so it cannot share the `lib` package name directly)
 
-Sibling skills MUST NOT keep their own copy; they `sys.path.insert` to this
-script dir and `from lib.utils import ...` (same pattern as
-article-to-solo-podcast/scripts/solo_tts.py importing tts-generation).
+Sibling skills MUST NOT keep their own copy of this logic.
 
 Provides common functions for:
 - Audio duration probing (ffprobe wrapper)

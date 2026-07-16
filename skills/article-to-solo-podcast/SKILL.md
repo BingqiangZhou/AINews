@@ -15,7 +15,8 @@ metadata:
 ## 关联 Skills / 资产
 
 - **tts-generation**：`scripts/mimo_tts.py` 的 `synthesize()`，由本 skill 的 `scripts/solo_tts.py` import 做分段合成。
-- **audio-to-social（只读复用，不改动）**：`scripts/voice_ref.wav`（克隆参考音）、`scripts/backup_file.py`（覆盖前备份）、`scripts/bump_episode.py`（集号自增）。集号真源 = `audio-to-social/config.json` 的 `platforms.boker_next_episode`。
+- **tts-generation（voice_ref.wav，只读复用）**：克隆参考音 `voice_ref.wav` 已随资产重分配迁入 tts-generation。
+- **ai-news-digest（只读复用，不改动）**：`scripts/backup_file.py`（覆盖前备份）、`scripts/bump_episode.py`（集号自增）已随资产重分配迁入 ai-news-digest。集号真源 = `ai-news-digest/config.json` 的 `platforms.boker_next_episode`。
 - **browser-publisher**：喜马拉雅上传/定时发布（仅用户明确确认时）。
 
 ## 流程概览

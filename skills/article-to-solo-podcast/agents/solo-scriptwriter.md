@@ -16,7 +16,7 @@ GENERATE 模式：
 - `source_file`：源文章路径（已 ingest 的干净正文）
 - `output_dir`：`<文章目录>/_podcast`
 - `brand_name` / `host_identity`：品牌名 / 主播身份（从 config.brand）
-- `episode_number`：集号（从 `audio-to-social/config.json` 的 `platforms.boker_next_episode`）
+- `episode_number`：集号（从 `ai-news-digest/config.json` 的 `platforms.boker_next_episode`）
 - `style_template_file`（可选）：同系列最近一期口播稿，作风格参照
 
 FIX 模式：
@@ -46,7 +46,7 @@ FIX 模式：
 ### Craft 规则（详见 `references/craft.md`，要点）
 - 黄金结构：hook（0-15s，反常识/痛点/悬念，禁套话开场）→ promise → body（3-5 要点，结论先行）→ climax → CTA。
 - 第一人称"我"，每段 ≤ 80 字，口语过渡。
-- **禁机器味词**（全清单见单一权威源 `audio-to-social/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段，`validate_solo_script.py` 运行时解析）。
+- **禁机器味词**（全清单见单一权威源 `article-studio/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段，`validate_solo_script.py` 运行时解析）。
 - 禁 Markdown 标记。禁公式化开头/套话结尾。禁"下期聊 XX"预告。
 - TTS 友好：拆密集数字/术语串，短句，断句自然。
 - 品牌声音：开头第一句用标准引入模板"大家好，这里是 AINews，第{episode}期，今天讲<主题>"；正文**不写**中段自介；结尾自然收束（如"咱们下期见"），**不用**"我是 AINews，下期见"品牌口播定式。

@@ -8,7 +8,7 @@ validate_solo_script.py — 单人播客脚本的确定性预检（LLM judge 之
   - 元数据：标题（去集号前缀）≤35字、简介字数 ∈ [200,300]、标签 5-8、集号前缀格式 {dddd}：
 
 软警告（写入报告但不影响 exit）：
-  - 机器味词命中（单一权威源：audio-to-social/references/brand-config.md 的
+  - 机器味词命中（单一权威源：article-studio/references/brand-config.md 的
     "## 禁用 AI 腔短语"，与 validate_content_quality.py 同源；config.content.
     machine_word_blocklist_extra 若提供则作为补充词，默认不再维护并行列表）
 
@@ -23,13 +23,13 @@ import sys
 from pathlib import Path
 
 
-# AI-腔禁用词的单一权威源：audio-to-social/references/brand-config.md
+# AI-腔禁用词的单一权威源：article-studio/references/brand-config.md
 # （与 article-studio 的 validate_content_quality.py 解析同一文件，避免两份
 # 冲突的"权威"列表漂移）。config.content.machine_word_blocklist_extra 仍可作为
 # 补充词，但默认不再维护并行的禁用词列表。
 _BRAND_CONFIG_PATH = (
     Path(__file__).resolve().parents[2]  # skills/
-    / "audio-to-social" / "references" / "brand-config.md"
+    / "article-studio" / "references" / "brand-config.md"
 )
 
 # Emergency fallback only, used if brand-config.md is unreadable. Keep in sync

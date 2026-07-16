@@ -30,9 +30,9 @@
 
 11. **更新集号计数器**：发布成功后，运行 `bump_episode.py` 自动递增集号并清除 claimed 标记：
 ```bash
-# 注意：bump_episode.py 在 audio-to-social skill 下，不在 browser-publisher
-python skills/audio-to-social/scripts/bump_episode.py \
-  --config skills/audio-to-social/config.json \
+# 注意：bump_episode.py 在 ai-news-digest skill 下，不在 browser-publisher
+python skills/ai-news-digest/scripts/bump_episode.py \
+  --config skills/ai-news-digest/config.json \
   --state "<播客 state.json 路径>" \
   --bump
 ```

@@ -5,9 +5,8 @@
     "ffprobe": "ffprobe"
   },
   "whisper_model": "large-v3-turbo",
-  "reused_from_audio_to_social": {
-    "_note": "TTS voice/model/clone 等参数的单一权威源在 audio-to-social/config.json#tts。mimo_tts.py 运行时不读本文件的 tts_* 字段（已删除以避免漂移）；voice/model 由 mimo_tts.py 的 DEFAULT_VOICE/MODEL_* 常量或 CLI 参数提供，clone/ref 由调用方传入。",
-    "tts": "../audio-to-social/config.json#tts",
-    "voice_ref_wav": "../audio-to-social/scripts/voice_ref.wav"
+  "_note": "voice_ref.wav 在本 skill scripts/ 下（TTS 克隆参考音频的单一源，其它 skill 经相对路径引用）。TTS voice/model/clone 等参数的单一权威源在 ai-news-digest/config.json#tts；mimo_tts.py 运行时不读本文件的 tts_* 字段，voice/model 由 DEFAULT_VOICE/MODEL_* 常量或 CLI 参数提供。",
+  "reused_from_ai_news_digest": {
+    "tts": "../ai-news-digest/config.json#tts"
   }
 }

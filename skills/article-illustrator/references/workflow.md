@@ -163,7 +163,7 @@ Prompt 构建规范见 [prompt-construction.md](prompt-construction.md)。
 
 ### 5.1b 产出 segments.json（分段驱动模式必须）
 
-prompt 文件落盘后、生图前，立即跑 `build_segments` 产出 segments.json。这让下游播客 conductor 在生图完成前就能读到分段定义和 illustration_meta——这是消除 audio-to-social 隐藏竞态的关键。
+prompt 文件落盘后、生图前，立即跑 `build_segments` 产出 segments.json。这让下游播客 conductor 在生图完成前就能读到分段定义和 illustration_meta——这是消除编排流程隐藏竞态的关键。
 
 **分段驱动模式**（`article_has_sections: true`）：走路径 A（`--from-outline`），不依赖文章插图引用：
 ```bash

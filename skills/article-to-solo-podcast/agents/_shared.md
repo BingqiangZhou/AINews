@@ -2,7 +2,7 @@
 
 所有子代理先读本文件，再读各自合同。
 
-> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、禁用词单一源、集号单一源）的权威底座在 `audio-to-social/agents/_shared_base.md`。本文件 inline 保留关键不变量，并补充本 skill 专属内容（源文章信源、_podcast 路径常量、专属错误码 TTS_FAILED/FACTCHECK_* 等）。
+> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、禁用词单一源、集号单一源）的权威底座在 `ai-news-digest/agents/_shared_base.md`。本文件 inline 保留关键不变量，并补充本 skill 专属内容（源文章信源、_podcast 路径常量、专属错误码 TTS_FAILED/FACTCHECK_* 等）。
 
 ## 路径常量
 
@@ -23,7 +23,7 @@
 
 ## 配置来源
 
-统一从 `config.json` 读取分组：`brand`（品牌/主播身份）、`tts`（mimo 苏打 clone + 分段参数）、`content`（字数/段落；机器词 blocklist 的**单一权威源**在 `audio-to-social/references/brand-config.md`，本 config 仅 `machine_word_blocklist_extra` 用于追加补充词）、`evaluation`（最大修正轮数/市场可用门槛）、`publishing`（集号真源/bump 脚本）、`environment`（conda_python/ffmpeg/MIMO_API_KEY）。
+统一从 `config.json` 读取分组：`brand`（品牌/主播身份）、`tts`（mimo 苏打 clone + 分段参数）、`content`（字数/段落；机器词 blocklist 的**单一权威源**在 `article-studio/references/brand-config.md`，本 config 仅 `machine_word_blocklist_extra` 用于追加补充词）、`evaluation`（最大修正轮数/市场可用门槛）、`publishing`（集号真源/bump 脚本）、`environment`（conda_python/ffmpeg/MIMO_API_KEY）。
 
 `<py>` = `config.environment.conda_python`；`<scripts>` = `SCRIPTS_DIR`。
 
@@ -36,12 +36,12 @@
 1. 子 agent 的 goal 中写死完整输出路径（子 agent 忽略上下文里的路径提示）。
 2. 子 agent 返回后，主 agent 立即 read_file 验证输出存在且非空。
 3. 验证失败 → 带错误上下文重新委托同一 agent（1 次重试）；仍失败 → 记录 state.json 并跳过。
-4. **覆盖任何非 `temp/` 文件前先备份**：`<py> ../audio-to-social/scripts/backup_file.py --file "<目标>"`（复用 a2s 备份脚本，最多 3 份）。备份后才写。
+4. **覆盖任何非 `temp/` 文件前先备份**：`<py> ../ai-news-digest/scripts/backup_file.py --file "<目标>"`（复用 a2s 备份脚本，最多 3 份）。备份后才写。
 5. 更新 `state.json`：先完整读取，只改目标字段，再写回整个文件。
 
 ## 禁用机器味短语（blocklist）
 
-**单一权威源**：`audio-to-social/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段（与 article-studio 的 `validate_content_quality.py` 同源，避免两份冲突列表）。`validate_solo_script.py` 运行时从该文件解析；`config.content.machine_word_blocklist_extra` 仅用于追加该列表之外的补充词（默认空）。生成前必读 `references/craft.md`。
+**单一权威源**：`article-studio/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段（与 article-studio 的 `validate_content_quality.py` 同源，避免两份冲突列表）。`validate_solo_script.py` 运行时从该文件解析；`config.content.machine_word_blocklist_extra` 仅用于追加该列表之外的补充词（默认空）。生成前必读 `references/craft.md`。
 
 ## Prompt 先落盘
 

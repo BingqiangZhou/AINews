@@ -39,7 +39,7 @@ Each `--style` preset sets default values for `--palette` and `--rendering`. Ind
 
 ---
 
-## Convenience Presets for audio-to-social
+## Convenience Presets for Orchestrator
 
 `visual_preset`（`knowledge-card` / `cozy-story` / `bold-warning` / `minimal-opinion`）到五维的映射（含 dual palette 备选语义）是 `visual-preset-mapping.md` 的职责，不在此重复。详见 [visual-preset-mapping.md](visual-preset-mapping.md)。
 

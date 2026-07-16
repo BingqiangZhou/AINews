@@ -1,4 +1,4 @@
-"""Reconcile planned, referenced, and generated audio-to-social images."""
+"""Reconcile planned, referenced, and generated ai-news-digest images."""
 from __future__ import annotations
 
 import argparse

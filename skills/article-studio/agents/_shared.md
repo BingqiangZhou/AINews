@@ -2,7 +2,7 @@
 
 所有子代理先读本文件，再读各自合同。
 
-> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、禁用词单一源）的权威底座在 `audio-to-social/agents/_shared_base.md`。本文件 inline 保留关键不变量，并补充本 skill 专属内容（RESEARCH_FILE 信源、分寸红线、6 类文章 profile、专属错误码 FIDELITY_VIOLATION/REDLINE_VIOLATION 等）。
+> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、禁用词单一源）的权威底座在 `ai-news-digest/agents/_shared_base.md`。本文件 inline 保留关键不变量，并补充本 skill 专属内容（RESEARCH_FILE 信源、分寸红线、6 类文章 profile、专属错误码 FIDELITY_VIOLATION/REDLINE_VIOLATION 等）。
 
 ## 路径常量
 
@@ -10,8 +10,7 @@
 |------|------|
 | PROJECT_ROOT | 当前工作目录（项目根目录） |
 | SKILL_ROOT | `{PROJECT_ROOT}/skills/article-studio` |
-| A2S_ROOT | `{PROJECT_ROOT}/skills/audio-to-social`（只读复用其 scripts/ 和 references/） |
-| A2S_SCRIPTS | `{A2S_ROOT}/scripts` |
+| DIGEST_SCRIPTS | `{PROJECT_ROOT}/skills/ai-news-digest/scripts`（backup_file.py 在此） |
 | OUTPUT_DIR | 项目目录（`articles/{YYYY-MM-DD}_{标题}/`，由 state.json.output_dir 给出） |
 | RESEARCH_DIR | `{OUTPUT_DIR}/_research` |
 | RESEARCH_FILE | `{RESEARCH_DIR}/事实素材与来源.md` |
@@ -30,9 +29,9 @@
 
 - **本 skill 的 `config.json`**：`content`（字数/段落/小节默认阈值）、`article_types`（6 类枚举）、`default_article_type`、`type_content_overrides`（按类型的字数/小节覆盖）、`evaluation`（修正轮数/门槛/红线开关）、`research`（检索引擎/信源要求）、`environment`（复用脚本路径）、`archive`（归档根/无系列序号）。
 - **`references/type-profiles.md`**：6 类文章 profile（结构骨架/rubric_focus/红线子集/voice/CTA/标题套路/字数覆盖/取材重点），按 `article_type` 加载。
-- **audio-to-social 的 `references/brand-config.md`（只读复用）**：禁用 AI 腔短语 blocklist，`validate_content_quality.py` 运行时解析。
+- **本 skill 的 `references/brand-config.md`**：禁用 AI 腔短语 blocklist，`validate_content_quality.py` 运行时解析（品牌配置与内容质量校验脚本已随资产重分配迁入本 skill）。
 
-`<py>` = `config.environment.conda_python`；`<a2s_scripts>` = `A2S_SCRIPTS`。
+`<py>` = `config.environment.conda_python`；`<scripts>` = 本 skill 的 `scripts/`（validate_content_quality.py 已随资产重分配迁入）。
 
 ## 反虚构硬约束（最高优先级）
 
@@ -69,12 +68,12 @@ writer 在 DRAFT/FIX 时按当前类型子集自查，content-editor（内容主
 1. 子 agent 的 goal 中写死完整输出路径（子 agent 忽略上下文里的路径提示）。
 2. 子 agent 返回后，主 agent 立即 read_file 验证输出存在且非空。
 3. 验证失败 → 带错误上下文重新委托同一 agent（1 次重试）；仍失败 → 记录 state.json 并跳过。
-4. **覆盖任何非 `temp/` 文件前先备份**：`<py> <a2s_scripts>/backup_file.py --file "<目标>"`（复用 a2s 备份脚本，最多 3 份）。备份后才写。
+4. **覆盖任何非 `temp/` 文件前先备份**：`<py> ../ai-news-digest/scripts/backup_file.py --file "<目标>"`（共享备份脚本，最多 3 份）。备份后才写。
 5. 更新 `state.json`：先完整读取，只改目标字段，再写回整个文件。
 
 ## 禁用 AI 腔短语（blocklist）
 
-**单一权威源**：`audio-to-social/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段（跨 skill 共享，article-to-solo-podcast 的 `validate_solo_script.py` 也解析同一文件）。`validate_content_quality.py` 运行时从该文件解析（**非硬编码**）。生成前必读该文件；不在本文件罗列禁用词，以免与权威源漂移。
+**单一权威源**：`article-studio/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段（跨 skill 共享，article-to-solo-podcast 的 `validate_solo_script.py` 也解析同一文件）。`validate_content_quality.py` 运行时从该文件解析（**非硬编码**）。生成前必读该文件；不在本文件罗列禁用词，以免与权威源漂移。
 
 ## Prompt 先落盘
 

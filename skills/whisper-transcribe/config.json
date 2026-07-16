@@ -6,8 +6,5 @@
   },
   "default_timeout": 30,
   "default_whisper_model": "large-v3-turbo",
-  "reused_from_audio_to_social": {
-    "_note": "shared lib/utils.py 的单一权威源在 audio-to-social/scripts/lib/utils.py（本 skill 不再保留本地副本）。",
-    "lib_utils": "../audio-to-social/scripts/lib/utils.py"
-  }
+  "_note": "scripts/lib/utils.py 是本 skill 自有的管线工具库（canonical home），也是 article-to-video 经 re-export shim 引用的单一源。原 audio-to-social 共享枢纽已删除。"
 }

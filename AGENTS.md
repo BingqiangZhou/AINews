@@ -20,9 +20,8 @@ Each skill folder follows the same shape: `SKILL.md` (frontmatter + flow) + `con
 
 | Skill | Role |
 |-------|------|
-| **ai-news-digest** | The only orchestrator (`metadata.orchestrator: true`). RSS → score → factual material → delegates all content production + publish. Entry point: `/ai-news-digest`. |
-| **audio-to-social** | **NOT a skill/orchestrator anymore** — pure **shared-asset/config/doc hub** (no SKILL.md, no trigger). Hosts `lib/utils.py`, `voice_ref.wav`, `brand-config.md`, `bump_episode.py`, `validate_content_quality.py`, `_shared_base.md`, and the shared `config.json` (incl. `platforms.boker_next_episode`). See `skills/audio-to-social/README.md`. The old 录音转内容 orchestrator was removed. |
-| **article-studio** | Central writing skill. Any 公众号 article type; `transcript` mode = skip web research, source file is sole authority. Used by the orchestrator. |
+| **ai-news-digest** | The only orchestrator (`metadata.orchestrator: true`). RSS → score → factual material → delegates all content production + publish. Entry point: `/ai-news-digest`. Also owns the shared `config.json` (brand/cover/image/tts/`platforms.boker_next_episode`) + pipeline helpers (`backup_file.py`, `bump_episode.py`, `compress_images.py`, `reconcile_media.py`) + `agents/_shared_base.md`. |
+| **article-studio** | Central writing skill. Any 公众号 article type; `transcript` mode = skip web research, source file is sole authority. Owns `references/brand-config.md` (brand voice + banned-phrase single source) + `scripts/validate_content_quality.py`. |
 | article-cover-image-generator | Cover image (900x383). |
 | article-illustrator | Article illustrations (prepare → render, rewrites `![]()` into article). |
 | article-to-solo-podcast | Article → single-voice podcast + TTS. Claims episode number. |
@@ -32,25 +31,33 @@ Each skill folder follows the same shape: `SKILL.md` (frontmatter + flow) + `con
 
 ## Hard architecture rules
 
-- **The orchestrator produces no content.** `ai-news-digest` only runs scripts + delegates to downstream skills. Don't add content generation to it. (`audio-to-social` is no longer an orchestrator — see hub role below.)
+- **The orchestrator produces no content.** `ai-news-digest` only runs scripts + delegates to downstream skills. Don't add content generation to it.
 - **Publishing is single-sourced in `browser-publisher`.** No other skill writes publish code.
 - **`article-studio` transcript mode** is the orchestrator glue: pass `source_mode: "transcript"` + `source_file` (factual-material markdown); it then skips web research and treats that file as the sole authority (zero external facts).
-- **Config reuse points at `audio-to-social/config.json`** (read-only from other skills): cover/image/tts settings and — critically — `platforms.boker_next_episode`, the **single source of the boker episode number**.
-- **Episode number single source.** `boker_next_episode` lives in `audio-to-social/config.json`. `ai-news-digest` reads it; only `bump_episode.py` (after successful publish) writes it. (No more two-orchestrator race — `audio-to-social` is no longer an orchestrator.)
+- **Config reuse points at `ai-news-digest/config.json`** (read-only from other skills): cover/image/tts settings and — critically — `platforms.boker_next_episode`, the **single source of the boker episode number**.
+- **Episode number single source.** `boker_next_episode` lives in `ai-news-digest/config.json`. `ai-news-digest` reads it; only `bump_episode.py` (after successful publish) writes it.
 
 ## Shared code & docs single-sourcing
 
-`audio-to-social` is the **shared-scripts / shared-config / shared-docs hub**. (It was once a peer orchestrator; the 录音转内容 orchestrator was removed and only the hub assets remain. See `skills/audio-to-social/README.md`.) These single-source rules were consolidated to kill drift:
+The old `audio-to-social/` directory (once a peer orchestrator, then a shared-asset hub) has been **deleted entirely**. Its 10 hub assets were redistributed to their natural owners by functional coupling. These single-source rules still hold — the assets just live in different skills now:
 
-- **`scripts/lib/utils.py` canonical copy lives in `audio-to-social/scripts/lib/`.** `whisper-transcribe` and `article-to-video` MUST NOT keep their own copy:
-  - `whisper-transcribe/scripts/transcribe-faster-whisper.py` `sys.path.insert`s audio-to-social's `scripts/` and `from lib.utils import ...` (its own `lib/` dir was removed).
-  - `article-to-video/scripts/lib/utils.py` is a **thin re-export shim** (loads audio-to-social's utils via `importlib` by absolute path, re-exports the public surface) — needed because article-to-video keeps its own `lib/caption_align.py` (vendored), and two same-named `lib` packages can't both win `sys.path`. The shim's only job is forwarding; do not add logic there.
-  - `image-generator/scripts/lib/utils.py` and `browser-publisher/scripts/lib/utils.py` are **unrelated** modules (AGNES helpers / WeChat HTTP helpers) — different content, same filename, leave as-is.
-- **`voice_ref.wav` single copy** at `audio-to-social/scripts/voice_ref.wav`. `tts-generation/scripts/mimo_tts.py` resolves its default ref audio to `../../audio-to-social/scripts/voice_ref.wav`; no other copy exists.
-- **AI-腔禁用词 (banned-phrase blocklist) single source** = `audio-to-social/references/brand-config.md` (`## 禁用 AI 腔短语`). Both `article-studio/.../validate_content_quality.py` and `article-to-solo-podcast/.../validate_solo_script.py` parse this same file at runtime. `article-to-solo-podcast/config.json#content.machine_word_blocklist_extra` is an optional *additive* list (default `[]`), NOT a parallel source. Never inline the phrase list in skill docs — link to brand-config.md.
-- **`agents/_shared_base.md`** (in `audio-to-social/agents/`) is the cross-skill base contract: `<py>`/ffmpeg resolution, unified return format, 5 file-write rules, shared error codes, episode single-source, "默认不回退". Each skill's `agents/_shared.md` inherits it (inline-copies the load-bearing invariants, since sub-agents may not follow relative links) and adds skill-specific deltas (paths, persona, source-specific anti-fabrication, skill-specific error codes).
-- **article-to-video 5-script invocation** canonical bash lives in `article-to-video/SKILL.md` ("### 脚本调用示例"). `ai-news-digest/references/delegation-contracts.md` references it rather than duplicating the block.
-- **`config.json` field naming**: prefer `environment.conda_python` / `environment.ffmpeg` / `environment.ffprobe` (nested). `audio-to-social/scripts/lib/utils.py`'s `get_ffmpeg_path()`/`get_ffprobe_path()` accept both the nested `environment.*` and legacy flat `ffmpeg_path`/`ffprobe_path` keys. Mirrored model names (`mimo-v2.5-tts-voiceclone`, `万相2.7`, …) live once in `audio-to-social/config.json`; downstream skills express the relationship via a `reused_from_audio_to_social` (or `_reused_from_audio_to_social`) block rather than re-declaring the values (fields actually read by a skill's own workflow are kept, with a `_note` flagging the sync relationship).
+| Asset | Owner | Consumers |
+|-------|-------|-----------|
+| `scripts/lib/utils.py` | **whisper-transcribe** | whisper-transcribe (local), article-to-video (re-export shim) |
+| `scripts/voice_ref.wav` | **tts-generation** | tts-generation (local `mimo_tts.py` default), article-to-solo-podcast |
+| `references/brand-config.md` | **article-studio** | validate_content_quality.py (co-located), validate_solo_script.py, ai-news-digest |
+| `scripts/validate_content_quality.py` | **article-studio** | article-studio Phase 2 (co-located with brand-config.md — it parses `../references/brand-config.md`) |
+| `scripts/backup_file.py` + `bump_episode.py` | **ai-news-digest** | bump_episode does `from backup_file import backup_file` (same-dir import) — they must co-locate |
+| `scripts/compress_images.py` + `reconcile_media.py` | **ai-news-digest** | Phase 8 archive (reconcile_media.py reads `../config.json`'s `image.cover_size` — co-located with config.json) |
+| `agents/_shared_base.md` | **ai-news-digest** | inherited by article-studio + article-to-solo-podcast `agents/_shared.md` |
+| `config.json` (brand/cover/image/tts/boker_next_episode/environment) | **ai-news-digest** | 9 skills read via `../ai-news-digest/config.json#field` |
+
+Key invariants (unchanged):
+- **`lib/utils.py`**: whisper-transcribe owns the canonical copy. `article-to-video/scripts/lib/utils.py` is a **thin re-export shim** (loads whisper's utils via `importlib` by absolute path) — needed because article-to-video keeps its own `lib/caption_align.py` (vendored), and two same-named `lib` packages can't both win `sys.path`. `image-generator/scripts/lib/utils.py` and `browser-publisher/scripts/lib/utils.py` are **unrelated** modules (AGNES/WeChat helpers), same filename, leave as-is.
+- **`voice_ref.wav`**: single copy at `tts-generation/scripts/voice_ref.wav` (gitignored as `skills/*/scripts/voice_ref.wav`); other skills reference via relative path.
+- **AI-腔禁用词 single source** = `article-studio/references/brand-config.md` (`## 禁用 AI 腔短语`). Both `validate_content_quality.py` (article-studio) and `validate_solo_script.py` (article-to-solo-podcast) parse it. `article-to-solo-podcast/config.json#content.machine_word_blocklist_extra` is an optional additive list only.
+- **article-to-video 5-script invocation** canonical bash lives in `article-to-video/SKILL.md`; `ai-news-digest/references/delegation-contracts.md` references it.
+- **`config.json` field naming**: prefer `environment.conda_python`/`environment.ffmpeg`/`environment.ffprobe` (nested). `lib/utils.py`'s `get_ffmpeg_path()`/`get_ffprobe_path()` accept both nested and legacy flat keys. Mirrored model names live once in `ai-news-digest/config.json`; downstream skills flag the sync via `_note`/`_reused_*` blocks rather than re-declaring values.
 
 ## Command & runtime conventions
 

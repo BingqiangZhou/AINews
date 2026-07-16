@@ -107,7 +107,7 @@ Prompt 构建规范遵循 `references/prompt-construction.md`：
 - 文件存在且 > 5KB
 - 尺寸为 1920×1080（或接近）
 
-> 公众号上传使用 PNG 原图（微信不接受 webp）；压缩由调用方（如 audio-to-social Phase 7）统一处理，本 agent 不压缩。
+> 公众号上传使用 PNG 原图（微信不接受 webp）；压缩由调用方（如编排器的图片压缩步骤）统一处理，本 agent 不压缩。
 
 ## 质量检查
 

@@ -1,6 +1,6 @@
 # 跨 skill 子 agent 共享底座
 
-> 本文件是所有带子 agent 的 skill（`ai-news-digest` / `audio-to-social` /
+> 本文件是所有带子 agent 的 skill（`ai-news-digest` /
 > `article-studio` / `article-to-solo-podcast`）的**公共契约底座**，集中维护
 > 容易跨 skill 漂移的通用规则。各 skill 的 `agents/_shared.md` 继承本文件，
 > 只补充本 skill 专属内容（路径常量、人设、专属错误码、专属反虚构信源）。
@@ -17,7 +17,7 @@
 - **ffprobe**：同理，`AINews_FFPROBE` → `config.environment.ffprobe`（或 `ffprobe_path`）→ `ffprobe`。
 - **CJK 字幕字体**：`AINews_FONT` → `config.font`（或 `environment.font`）→ 平台默认。
 
-> 注：`audio-to-social/scripts/lib/utils.py` 的 `get_ffmpeg_path()` /
+> 注：`whisper-transcribe/scripts/lib/utils.py` 的 `get_ffmpeg_path()` /
 > `get_ffprobe_path()` 已兼容 `environment.*` 嵌套与旧扁平字段两种命名。
 
 ## 日期规则
@@ -35,7 +35,7 @@
 1. **goal 中写死完整输出路径**（绝对路径或相对 OUTPUT_DIR 的明确路径；子 agent 忽略上下文里的路径提示）。
 2. 子 agent 返回后，主 agent 立即 `read_file` 验证输出产物存在且非空。
 3. 验证失败 → 带错误上下文重新委托同一 agent（**1 次重试**）→ 仍失败记 `stages.{stage}.status="failed"` 并跳过。
-4. **覆盖任何非 `temp/` 文件前先备份**：`<py> <a2s_scripts>/backup_file.py --file "<目标>"`（复用 audio-to-social 的备份脚本，最多 3 份）。备份后才写。
+4. **覆盖任何非 `temp/` 文件前先备份**：`<py> skills/ai-news-digest/scripts/backup_file.py --file "<目标>"`（共享备份脚本，最多 3 份）。备份后才写。
 5. 更新 `state.json`：**先完整读取当前内容 → 只改目标字段 → 写回整个文件**（禁止部分写覆盖）。
 
 ## 反虚构硬约束（跨 skill 通用原则）
@@ -43,7 +43,6 @@
 内容代表真人品牌，编造事实直接损害可信度。**所有事实、数据、版本号、日期、引文必须 100% 来自本 skill 的权威信源**（各 skill 的信源不同，见各自 `_shared.md`）：
 
 - `ai-news-digest`：当日 RSS 采集条目（`temp/digest_ranked.json`），URL 原样保留。
-- `audio-to-social`：Phase 1 转录文本（`temp/转录文本.txt`）。
 - `article-studio`：`_research/事实素材与来源.md`（stance_research 检索产物 / transcript 模式转录原文）。
 - `article-to-solo-podcast`：源文章（上游 article-studio 产物）。
 
@@ -51,7 +50,7 @@
 
 ## 禁用 AI 腔短语（单一权威源）
 
-**跨 skill 单一权威源**：`audio-to-social/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段。
+**跨 skill 单一权威源**：`article-studio/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段。
 
 - `article-studio` 的 `validate_content_quality.py` 运行时解析该文件做机器预检。
 - `article-to-solo-podcast` 的 `validate_solo_script.py` 运行时解析**同一文件**（不再读 config 的并行列表；`config.content.machine_word_blocklist_extra` 仅用于追加补充词）。
@@ -59,9 +58,8 @@
 
 ## 集号管理（episode 单一来源）
 
-- **单一来源**：`audio-to-social/config.json` 的 `platforms.boker_next_episode`。
-- `ai-news-digest` 与 `audio-to-social` **共享同一集号源**——同一天不要同时跑两者（集号竞争）。
-- 只有 `audio-to-social/scripts/bump_episode.py`（发布成功后）写它；其余 skill 只读。
+- **单一来源**：`ai-news-digest/config.json` 的 `platforms.boker_next_episode`。
+- 只有 `ai-news-digest/scripts/bump_episode.py`（发布成功后）写它；其余 skill 只读。
 - 播客开始前 claim 集号到 `state.json.episode_number_claimed`；发布成功后递增并清空。中途崩溃复用 `episode_number_claimed`，避免集号空洞/复用。
 
 ## "默认不回退"策略（媒体生成）

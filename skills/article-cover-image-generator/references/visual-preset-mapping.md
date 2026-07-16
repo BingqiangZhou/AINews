@@ -1,6 +1,6 @@
 # Visual Preset Mapping
 
-Maps audio-to-social `visual_preset` values to article-cover-image-generator five-dimensional defaults.
+Maps the orchestrator's `visual_preset` values to article-cover-image-generator five-dimensional defaults.
 
 ## Cover Profile Mapping (900x383)
 
@@ -40,4 +40,4 @@ Maps audio-to-social `visual_preset` values to article-cover-image-generator fiv
 
 **规则**：当 `target_profile == illustration` 时，无论 visual_preset 是什么，`text` 和 `font` 必须按此表覆盖。其余维度（type、palette、rendering、mood）仍使用 visual_preset 映射值。
 
-**单一信息源**：本节是 illustration type → Text/Font 映射的唯一事实源。`article-illustrator/references/prompt-construction.md` 与 `audio-to-social/agents/illustration-prompt-agent.md` 均引用此处，不再内联该表。
+**单一信息源**：本节是 illustration type → Text/Font 映射的唯一事实源。`article-illustrator/references/prompt-construction.md` 引用此处，不再内联该表。

@@ -78,7 +78,7 @@ export AINews_FONT="C:/Windows/Fonts/msyh.ttc"                 # 可选，视频
 |------|-----------|------|------|
 | `/ai-news-digest` | **ai-news-digest**（纯编排器） | 当日 RSS AI 资讯 | AI 日报文章 + 播客 + 视频 + 三平台草稿 |
 
-> 历史上还有 `/audio-to-social`（录音转内容线），现已移除。`audio-to-social/` 目录保留为**跨 skill 共享资产中枢**（lib/utils.py、brand-config.md、集号计数、TTS 参考音频等），不再作为编排器入口。
+> 历史上还有 `/audio-to-social`（录音转内容线），现已移除，目录完全删除。其共享资产按职能分散到各 skill（lib/utils→whisper-transcribe、voice_ref→tts-generation、brand-config→article-studio、管线 helper+集号 config→ai-news-digest）。
 
 ---
 
@@ -211,7 +211,7 @@ articles/{YYYY-MM-DD}_AI日报/
 1. **编排器不生产内容。** `ai-news-digest` 只跑脚本 + 委派下游 skill。
 2. **发布逻辑单一来源。** 所有发布代码都在 `browser-publisher`，其它 skill 一律委派，不重写。
 3. **`article-studio` transcript 模式是编排器胶水。** 传 `source_mode: "transcript"` + `source_file`，它跳过联网检索、把传入文件当作唯一权威源（零外部事实）。
-4. **集号单一来源。** 播客集号统一读 `audio-to-social/config.json` 的 `platforms.boker_next_episode`（`audio-to-social/` 现为共享资产中枢，非编排器）。只有 `bump_episode.py` 在发布成功后递增。
+4. **集号单一来源。** 播客集号统一读 `ai-news-digest/config.json` 的 `platforms.boker_next_episode`。只有 `ai-news-digest/scripts/bump_episode.py` 在发布成功后递增。
 5. **反虚构硬约束。** 日报内容只能来自当日真实 RSS 条目，每条引用保留原信源 URL。不编造新闻、不补造事件日期。
 
 ---
@@ -221,7 +221,7 @@ articles/{YYYY-MM-DD}_AI日报/
 ```
 .
 ├── .claude-plugin/         # Claude Code / ZCode 插件清单（plugin.json + marketplace.json + hooks/）
-├── skills/                 # 10 个 skill + audio-to-social 共享资产枢纽（SKILL.md + config.json + scripts/ + references/ + agents/）
+├── skills/                 # 10 个 skill（SKILL.md + config.json + scripts/ + references/ + agents/）；跨 skill 共享资产分散在 whisper-transcribe/tts-generation/article-studio/ai-news-digest
 ├── configs/                # 运行时配置与数据（tracked，state.json 除外）
 │   ├── bestblogs-sources/  # RSS 信源表（1686 条）+ 可读索引
 │   └── ai-news-digest/     # RSS 增量游标 state.json（gitignored）

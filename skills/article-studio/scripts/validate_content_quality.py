@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Machine-checkable quality gates for audio-to-social outputs.
+"""Machine-checkable quality gates for article writing outputs (brand voice, structure, banned phrases).
 
 This script intentionally validates only deterministic constraints. LLM quality
 gates remain responsible for semantic judgment such as platform-native voice and
@@ -67,7 +67,7 @@ _BANNED_ALWAYS, _BANNED_START = _load_banned_phrases()
 
 VALID_PLATFORMS = {"gongzhonghao", "boker"}
 
-# Default gongzhonghao thresholds (audio-to-social scenario). Other skills
+# Default gongzhonghao thresholds (legacy orchestrator scenario). Other skills
 # (article-studio, daily-digest) override the values they need via CLI
 # args / thresholds dict — see validate_project().
 DEFAULT_GZH_THRESHOLDS: dict[str, int] = {
@@ -367,8 +367,8 @@ def validate_project(
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate audio-to-social machine-checkable quality gates.")
-    parser.add_argument("--output-dir", required=True, help="audio-to-social output directory")
+    parser = argparse.ArgumentParser(description="Validate article machine-checkable quality gates.")
+    parser.add_argument("--output-dir", required=True, help="article output directory")
     parser.add_argument("--platform", action="append", dest="platforms", required=True, help="Platform to validate")
     parser.add_argument("--report", help="Optional JSON report path")
     # Threshold overrides (default None → use DEFAULT_GZH_THRESHOLDS). Allow other

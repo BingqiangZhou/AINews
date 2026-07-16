@@ -27,7 +27,7 @@ ARTICLE_FILE
 
 ## 2a — 机器预检（确定性硬检）
 
-复用 `audio-to-social/scripts/validate_content_quality.py`，**必须按当前 `article_type` 合并阈值后通过 CLI 覆盖传给脚本**（否则脚本用默认值，会与 profile 的 `content_overrides` 冲突，误报 error）。
+复用 `article-studio/scripts/validate_content_quality.py`，**必须按当前 `article_type` 合并阈值后通过 CLI 覆盖传给脚本**（否则脚本用默认值，会与 profile 的 `content_overrides` 冲突，误报 error）。
 
 ### 阈值合并（主 agent 调用前计算）
 
@@ -42,7 +42,7 @@ ARTICLE_FILE
 ### 调用命令
 
 ```bash
-<py> <a2s_scripts>/validate_content_quality.py \
+<py> <scripts>/validate_content_quality.py \
   --output-dir "{OUTPUT_DIR}" \
   --platform gongzhonghao \
   --report "{TEMP_DIR}/validate-round-{N}.json" \
@@ -62,7 +62,7 @@ ARTICLE_FILE
 - 摘要：`公众号_摘要.txt` 存在，≤ 合并后的 digest 字数
 - 正文：字数在合并后的 body 范围（如 howto/story/news/profile/review 上限放宽到 3000）
 - 小节：`##` 数在合并后的 section 范围（如 story 可低到 1、news 可高到 8）
-- AI 腔短语（动态加载 `audio-to-social/references/brand-config.md` 的 blocklist）
+- AI 腔短语（动态加载 `article-studio/references/brand-config.md` 的 blocklist）
 - severity：error（必须清零）/ warning
 
 **额外检查**（本 skill 新增，主 agent 自行 grep）：
@@ -224,7 +224,7 @@ else:
 2. 委托 `article-writer.md` 切 **FIX 模式**，传**合并后的 fix_directives 数组**（保持原 `article_type`）
 3. writer FIX 前，**主 agent 先备份旧稿**：
    ```bash
-   <py> <a2s_scripts>/backup_file.py --file "{ARTICLE_FILE}"
+   <py> ../ai-news-digest/scripts/backup_file.py --file "{ARTICLE_FILE}"
    ```
 4. writer 覆盖 `ARTICLE_FILE` 后，重跑 2a + 2b（双主编并行），出 `scorecards/content-round-(N+1).json` + `scorecards/reader-round-(N+1).json`
 5. 循环直到 `pass` / `pass with notes` 或达 `max_fix_rounds`

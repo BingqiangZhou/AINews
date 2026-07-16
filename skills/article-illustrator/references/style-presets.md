@@ -12,7 +12,7 @@
 
 ## 中文别名 Preset（向后兼容）
 
-> ⚠️ **重要**：这 4 个是 audio-to-social 集成的兼容别名，**不可删除/改名**。audio-to-social 的 `visual_preset` 自动映射依赖它们。
+> ⚠️ **重要**：这 4 个是编排器集成的兼容别名，**不可删除/改名**。编排器的 `visual_preset` 自动映射依赖它们。
 
 | 别名 Preset | 等价于 | Type | Style | Palette | visual_preset 映射来源 |
 |---|---|---|---|---|---|

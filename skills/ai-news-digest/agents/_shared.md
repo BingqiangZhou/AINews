@@ -2,7 +2,7 @@
 
 > 本文件定义所有子 agent 共享的路径常量、返回格式、反虚构硬约束、错误码。子 agent 委派前先加载。
 >
-> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、集号单一源、默认不回退）的权威底座在 `audio-to-social/agents/_shared_base.md`。本文件 inline 保留关键不变量（子 agent 不一定 follow 相对链接），并补充本 skill 专属内容（RSS 信源、AI 小周人设、日报路径常量）。
+> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、集号单一源、默认不回退）的权威底座在 `ai-news-digest/agents/_shared_base.md`。本文件 inline 保留关键不变量（子 agent 不一定 follow 相对链接），并补充本 skill 专属内容（RSS 信源、AI 小周人设、日报路径常量）。
 
 ## 路径常量
 
@@ -10,9 +10,9 @@
 
 - **PROJECT_ROOT**：当前工作目录（仓库根）
 - **SKILL_ROOT**：`{PROJECT_ROOT}/skills/ai-news-digest`
-- **A2S_ROOT**：`{PROJECT_ROOT}/skills/audio-to-social`（复用资产来源）
+- **DIGEST_SCRIPTS**：`{SKILL_ROOT}/scripts`（backup_file/bump_episode/compress_images/reconcile_media 在此）
 - **SCRIPTS_DIR**：`{SKILL_ROOT}/scripts`
-- **A2S_SCRIPTS**：`{A2S_ROOT}/scripts`
+
 - **OUTPUT_DIR**：`{storage_root}/articles/{YYYY-MM-DD}_AI日报/`（storage_root 从 config.brand 读；默认 = PROJECT_ROOT）
 - **TEMP_DIR**：`{OUTPUT_DIR}/temp`
 - **PROMPTS_DIR**：`{OUTPUT_DIR}/prompts`
@@ -25,7 +25,7 @@
 ## 配置来源
 
 - **本 skill `config.json`**：sources / scoring / article / media / platforms / environment。
-- **`audio-to-social/config.json`（只读复用）**：brand / cover / image / tts / platforms.boker_next_episode。
+- **`ai-news-digest/config.json`（只读复用）**：brand / cover / image / tts / platforms.boker_next_episode。
 - **`<py>`** = `config.environment.conda_python`。
 
 ## 统一返回格式
@@ -55,7 +55,7 @@
 1. **goal 中写死完整输出路径**（绝对路径或相对 OUTPUT_DIR 的明确路径）。
 2. 返回后主 agent 用 read_file 验证输出产物存在且非空。
 3. 验证失败 → 带上下文重委托 1 次 → 仍失败记 `stages.{stage}.status="failed"` 跳过。
-4. 覆盖非 `temp/` 文件前先调 `<a2s_scripts>/backup_file.py` 备份。
+4. 覆盖非 `temp/` 文件前先调 `<scripts>/backup_file.py` 备份。
 5. 更新 `state.json` 时**先完整读、改目标字段、写回整个文件**（禁止部分写覆盖）。
 
 ## 错误码表
@@ -76,10 +76,10 @@
 ## 人设
 
 - **AI 小周**：AI 日报主播口吻——客观简洁传递事实，克制点评，不堆形容词。区别于个人随笔的第一人称。
-- 详见 `audio-to-social/references/brand-config.md` 的"人设区分"段。
+- 详见 `article-studio/references/brand-config.md` 的"人设区分"段。
 
 ## 集号管理
 
-- **单一来源**：`audio-to-social/config.json` 的 `platforms.boker_next_episode`（`audio-to-social/` 现为共享资产枢纽，非编排器）。
+- **单一来源**：`ai-news-digest/config.json` 的 `platforms.boker_next_episode`（本 skill config.json 单一来源）。
 - 本 skill 只读不写（写由 `bump_episode.py` 在 Phase 9b 发布成功后做）。
 - Phase 7c 播客开始前 claim 集号到 `state.json.episode_number_claimed`；Phase 9b 发布成功后递增并清空。

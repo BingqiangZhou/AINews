@@ -49,7 +49,7 @@ def write_json_atomic(path: Path, data: dict) -> None:
 
 def main():
     parser = argparse.ArgumentParser(description="管理喜马拉雅播客集号")
-    parser.add_argument("--config", required=True, help="audio-to-social config.json 路径")
+    parser.add_argument("--config", required=True, help="ai-news-digest config.json 路径")
     parser.add_argument("--state", required=True, help="项目 state.json 路径")
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--bump", action="store_true", help="发布成功后递增集号 +1")

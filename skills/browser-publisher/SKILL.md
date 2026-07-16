@@ -149,7 +149,7 @@ Session 过期、文件缺失、Chrome MCP 连接失败分别由 Step 0（文件
 
 ## 发布结果回传
 
-当编排器（如 `audio-to-social` / `ai-news-digest`）调用本 skill 发布时，发布完成后回传结构化结果给编排器。
+当编排器（如 `ai-news-digest`）调用本 skill 发布时，发布完成后回传结构化结果给编排器。
 
 ### 输入参数（编排器传入）
 

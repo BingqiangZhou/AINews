@@ -1,6 +1,6 @@
 {
   "schema_version": "ai-news-digest-v1",
-  "description": "AI 资讯日报编排器。RSS 聚合抓取 → 规则预筛 → AI 打分 → 事实素材 → 委派 article-studio 写日报文章 → 封面/插图/播客/视频 → 草稿发布。",
+  "description": "AI 资讯日报编排器。RSS 聚合抓取 → 规则预筛 → AI 打分 → 事实素材 → 委派 article-studio 写日报文章 → 封面/插图/播客/视频 → 草稿发布。本文件同时是跨 skill 共享配置的单一来源（brand/cover/image/tts/boker_next_episode，原 audio-to-social 枢纽已删除，资产分散到各 skill）。",
   "brand": {
     "name": "AINews",
     "storage_root": ""
@@ -38,28 +38,58 @@
   "platforms": {
     "gongzhonghao": {"enabled": true, "mode": "draft_only"},
     "boker": {"enabled": true},
-    "douyin": {"enabled": true}
+    "douyin": {"enabled": true},
+    "boker_next_episode": 1,
+    "_note_boker_next_episode": "集号单一来源（跨 skill 共享）。article-to-solo-podcast 读它定集号；本 skill 发布成功后调 scripts/bump_episode.py 递增。原位于 audio-to-social/config.json。"
+  },
+  "cover": {
+    "_note": "封面后端配置（跨 skill 共享，cover-generator/image-generator 同步引用）。原位于 audio-to-social/config.json。",
+    "provider": "gaoding",
+    "model": "agnes-image-2.1-flash",
+    "gaoding_model": "万相2.7",
+    "jimeng_model": "图片 4.7",
+    "type": "auto",
+    "palette": "auto",
+    "rendering": "auto",
+    "text": "none",
+    "mood": "auto"
+  },
+  "image": {
+    "_note": "图片尺寸（跨 skill 共享，reconcile_media.py 读 cover_size/illustration_size）。原位于 audio-to-social/config.json。",
+    "output_format": "png",
+    "quality": 80,
+    "cover_size": "900x383",
+    "illustration_size": "1920x1080"
+  },
+  "tts": {
+    "_note": "TTS 配置（跨 skill 共享，tts-generation/article-to-solo-podcast 同步引用）。原位于 audio-to-social/config.json。",
+    "provider": "mimo",
+    "voice": "苏打",
+    "model": "mimo-v2.5-tts-voiceclone",
+    "clone": true,
+    "style": null,
+    "ref_audio": null
   },
   "environment": {
     "conda_python": "python",
     "ffmpeg": "ffmpeg",
+    "ffprobe": "ffprobe",
     "font": "",
     "wechat_mp_appid_env": "WECHAT_MP_APPID",
     "wechat_mp_appsecret_env": "WECHAT_MP_APPSECRET",
     "mimo_api_key_env": "MIMO_API_KEY",
     "agnes_api_key_env": "AGNES_API_KEY"
   },
-  "reused_from_audio_to_social": {
-    "cover": "../audio-to-social/config.json#cover",
-    "image": "../audio-to-social/config.json#image",
-    "tts": "../audio-to-social/config.json#tts",
-    "boker_next_episode": "../audio-to-social/config.json#platforms.boker_next_episode",
-    "validate_quality_script": "../audio-to-social/scripts/validate_content_quality.py",
-    "backup_file_script": "../audio-to-social/scripts/backup_file.py",
-    "bump_episode_script": "../audio-to-social/scripts/bump_episode.py",
-    "compress_images_script": "../audio-to-social/scripts/compress_images.py",
-    "reconcile_media_script": "../audio-to-social/scripts/reconcile_media.py",
-    "voice_ref_wav": "../audio-to-social/scripts/voice_ref.wav",
-    "brand_config": "../audio-to-social/references/brand-config.md"
+  "shared_assets_locations": {
+    "_note": "audio-to-social 目录已删除。跨 skill 共享资产的新位置（本 config 是 brand/cover/image/tts/boker_next_episode 的单一源）:",
+    "lib_utils": "../whisper-transcribe/scripts/lib/utils.py",
+    "voice_ref_wav": "../tts-generation/scripts/voice_ref.wav",
+    "brand_config": "../article-studio/references/brand-config.md",
+    "validate_content_quality_script": "../article-studio/scripts/validate_content_quality.py",
+    "backup_file_script": "./scripts/backup_file.py",
+    "bump_episode_script": "./scripts/bump_episode.py",
+    "compress_images_script": "./scripts/compress_images.py",
+    "reconcile_media_script": "./scripts/reconcile_media.py",
+    "agent_shared_base": "./agents/_shared_base.md"
   }
 }

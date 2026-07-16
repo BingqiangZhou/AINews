@@ -1,14 +1,16 @@
 """Re-export shim for the cross-skill shared utils.
 
 The canonical implementation lives at
-``audio-to-social/scripts/lib/utils.py`` (the shared-scripts hub per AGENTS.md).
-This shim lets the 5 sequential CLI scripts in ``article-to-video/scripts/``
-keep doing ``from lib.utils import ...`` while sharing a single source of
-truth with whisper-transcribe / audio-to-social.
+``whisper-transcribe/scripts/lib/utils.py`` (its canonical home). This shim
+lets the 5 sequential CLI scripts in ``article-to-video/scripts/`` keep doing
+``from lib.utils import ...`` while sharing a single source of truth with
+whisper-transcribe.
 
 NOTE: ``article-to-video`` also keeps its own ``lib/caption_align.py``
 (vendored from the archived highlight-render-hyperframes skill) — that module
-is *not* shared, so it stays as a real local file.
+is *not* shared, so it stays as a real local file. Two same-named ``lib``
+packages can't both win ``sys.path``, so utils is loaded via importlib by
+absolute path and re-exported here.
 """
 
 from __future__ import annotations
@@ -16,15 +18,15 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
-# skills/audio-to-social/scripts/lib/utils.py — resolve relative to this file.
+# skills/whisper-transcribe/scripts/lib/utils.py — resolve relative to this file.
 # _THIS_DIR = .../article-to-video/scripts/lib → parent×3 = skills/
 _THIS_DIR = Path(__file__).resolve().parent
-_A2S_UTILS = (
+_WT_UTILS = (
     _THIS_DIR.parent.parent.parent  # skills/
-    / "audio-to-social" / "scripts" / "lib" / "utils.py"
+    / "whisper-transcribe" / "scripts" / "lib" / "utils.py"
 )
 
-_spec = importlib.util.spec_from_file_location("_a2s_lib_utils", str(_A2S_UTILS))
+_spec = importlib.util.spec_from_file_location("_wt_lib_utils", str(_WT_UTILS))
 _mod = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_mod)
 

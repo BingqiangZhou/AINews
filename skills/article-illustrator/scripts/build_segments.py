@@ -3,7 +3,7 @@ build_segments.py — 扫描文章，产出 imgs/segments.json（章节→插图
 
 支持两种构建路径：
   路径 A（分段驱动，--from-outline）：文章尚未插入图片引用时，从 outline.md 读
-    segment→filename 映射。用于 prompt_only 模式或 audio-to-social 的 Phase 3b-prepare
+    segment→filename 映射。用于 prompt_only 模式或编排器的 Phase 3b-prepare
     （让 conductor 在生图前就能拿到分段定义）。
   路径 B（扫描模式，默认）：文章已插入 ![](imgs/...) 引用时，扫描引用归属章节。
     用于全量模式末尾（Step 7）。

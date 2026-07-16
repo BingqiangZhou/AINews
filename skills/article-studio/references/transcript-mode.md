@@ -2,7 +2,7 @@
 
 > 当 `source_mode == "transcript"` 时加载本文件。researcher / article-writer / content-editor（内容主编）/ reader（读者代表）在 transcript 模式下都按本文件覆盖各自默认（联网取材）流程。
 >
-> **动机**：被 `audio-to-social` 等编排器调用时，输入不是"主题+立场"，而是一段**口语转录文本**（如录音 Whisper 转录）。转录是唯一权威源——零联网、零外部事实，与编排器"内容只从源转录派生"的原则一致。
+> **动机**：被编排器（如 `ai-news-digest`）调用时，输入不是"主题+立场"，而是一段**口语转录文本**（如录音 Whisper 转录）。转录是唯一权威源——零联网、零外部事实，与编排器"内容只从源转录派生"的原则一致。
 
 > **news 清单分支**（`source_mode: transcript` + `article_type: news` + `config.news_digest_format.enabled`）：输入不是口语转录，而是编排器（如 `ai-news-digest`）产出的**结构化资讯素材**（按主题 `##` 分组、每条带信源+日期的 bullet 列表）。此时 writer **不走口语转书面改写**，改为**轻包装清单排版**——直接把素材条目排成可扫读的资讯清单。详见下文「news 清单分支」段。
 
@@ -105,7 +105,7 @@
 
 ### 口语转书面改写（非 news，或 news 清单模式关闭时）
 
-`agents/article-writer.md` DRAFT 模式在 transcript 模式下（非 news 清单分支），`RESEARCH_FILE` 的 `## 转录原文` 区是事实真源，写作本质是**口语转书面化改写**（沿用原 audio-to-social transcript-optimizer 的工艺）：
+`agents/article-writer.md` DRAFT 模式在 transcript 模式下（非 news 清单分支），`RESEARCH_FILE` 的 `## 转录原文` 区是事实真源，写作本质是**口语转书面化改写**（沿用编排器既有的 transcript-optimizer 写作工艺）：
 
 ### 必须做
 - **去口语化**：去除口头禅和语气词（"嗯""就是说""然后呢""对吧""你知道吗"），修正语病、啰嗦重复和逻辑跳跃。

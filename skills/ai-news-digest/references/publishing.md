@@ -57,7 +57,7 @@
 
 ### 前置
 - Chrome 已登录喜马拉雅 session（Chrome 由 chrome-devtools MCP 自动启动并管理）。
-- 集号：从 `audio-to-social/config.json` 的 `platforms.boker_next_episode` 读（Phase 7c 播客已 claim 到 `state.json.episode_number_claimed`）。
+- 集号：从 `ai-news-digest/config.json` 的 `platforms.boker_next_episode` 读（Phase 7c 播客已 claim 到 `state.json.episode_number_claimed`）。
 
 ### 步骤（委派 browser-publisher 执行）
 1. 导航 `https://studio.ximalaya.com/upload`
@@ -73,14 +73,14 @@
 
 ### 集号递增（发布成功后）
 ```bash
-<py> <a2s_scripts>/bump_episode.py \
-  --config skills/audio-to-social/config.json \
+<py> <scripts>/bump_episode.py \
+  --config skills/ai-news-digest/config.json \
   --state "<article_dir>/state.json" \
   --bump
 ```
-- 递增 `audio-to-social/config.json` 的 `boker_next_episode`。
+- 递增 `ai-news-digest/config.json` 的 `boker_next_episode`。
 - 清空 `state.json.episode_number_claimed`。
-- 集号单一来源是 `audio-to-social/config.json`（`audio-to-social/` 为共享资产枢纽，非编排器）。
+- 集号单一来源是本 skill 的 `config.json` 的 `platforms.boker_next_episode`。
 
 ### 完成后
 - `state.json.publish.tracks.boker.status = "published"`，记 `episode_url`。

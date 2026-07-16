@@ -16,7 +16,7 @@ metadata:
 
 - **whisper-transcribe**：`scripts/transcribe-faster-whisper.py`——对播客 TTS 音频做 word-level 转录，产出 `whisper_segments.json`。subprocess 调用。
 - ~~**highlight-render-hyperframes**~~（已归档至 `_backup/skills/highlight-render-hyperframes`）：原只读复用其 `scripts/lib/caption_align.py`（字幕对齐核心库）、`scripts/lib/utils.py`（JSON/ffprobe 工具）、`scripts/generate-timeline-captions.py`（底层对齐编排函数）。**现已内化至本 skill `scripts/lib/` + `scripts/generate-timeline-captions.py`**。importlib + sys.path 复用。
-- **audio-to-social / article-to-solo-podcast**：消费它们的产物（`公众号_文章.md` + `imgs/` + `公众号_封面.png` + `播客_TTS.mp3` + `播客_脚本.txt`）。如果文章目录缺播客音频/脚本，引导用户先跑 `article-to-solo-podcast`。
+- **article-to-solo-podcast**：消费其产物（`公众号_文章.md` + `imgs/` + `公众号_封面.png` + `播客_TTS.mp3` + `播客_脚本.txt`）。如果文章目录缺播客音频/脚本，引导用户先跑 `article-to-solo-podcast`。上游公众号文章/插图/封面由编排器（如 ai-news-digest）及下游 article-studio / article-illustrator / article-cover-image-generator 产出。
 
 ## 流程概览
 

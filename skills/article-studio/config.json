@@ -70,10 +70,9 @@
   },
   "environment": {
     "conda_python": "python",
-    "a2s_skill_dir": "../audio-to-social",
-    "validate_script": "../audio-to-social/scripts/validate_content_quality.py",
-    "backup_script": "../audio-to-social/scripts/backup_file.py",
-    "brand_config": "../audio-to-social/references/brand-config.md"
+    "validate_script": "./scripts/validate_content_quality.py",
+    "backup_script": "../ai-news-digest/scripts/backup_file.py",
+    "brand_config": "./references/brand-config.md"
   },
   "archive": {
     "root": "articles",

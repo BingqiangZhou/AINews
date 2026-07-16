@@ -19,7 +19,7 @@ Options:
   --text       Inline text to synthesize (mutually exclusive with --input)
   --voice      MiMo built-in voice name (default: 苏打)
   --clone      Use voice cloning instead of built-in voice
-  --ref        Reference audio file for cloning (default: ../audio-to-social/scripts/voice_ref.wav)
+  --ref        Reference audio file for cloning (default: voice_ref.wav in same dir)
   --model      MiMo model ID (auto-selected if omitted)
   --style      Style instruction for user message (optional)
   --api-key    API key (or set MIMO_API_KEY env var)
@@ -41,11 +41,9 @@ MODEL_CLONE = "mimo-v2.5-tts-voiceclone"
 DEFAULT_VOICE = "苏打"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-# voice_ref.wav 的单一权威源在 audio-to-social（与 article-to-solo-podcast/config.json
-# 的 tts.ref_audio 指向同一路径），避免跨 skill 维护重复二进制。
-DEFAULT_REF_AUDIO = os.path.join(
-    SCRIPT_DIR, os.pardir, os.pardir, "audio-to-social", "scripts", "voice_ref.wav"
-)
+# voice_ref.wav 的单一权威源就在本 skill scripts/ 下（TTS 克隆参考音频）。
+# 其它 skill（article-to-solo-podcast）通过相对路径引用本文件。
+DEFAULT_REF_AUDIO = os.path.join(SCRIPT_DIR, "voice_ref.wav")
 
 
 def synthesize(text: str, output_path: str, *, voice: str = DEFAULT_VOICE,
@@ -147,7 +145,7 @@ def main():
     parser.add_argument("--output", required=True, help="Output audio file path")
     parser.add_argument("--voice", default=DEFAULT_VOICE, help=f"Built-in voice name (default: {DEFAULT_VOICE})")
     parser.add_argument("--clone", action="store_true", help="Use voice cloning mode")
-    parser.add_argument("--ref", default=None, help="Reference audio for cloning (default: ../audio-to-social/scripts/voice_ref.wav)")
+    parser.add_argument("--ref", default=None, help="Reference audio for cloning (default: voice_ref.wav in same dir)")
     parser.add_argument("--model", default=None, help="Model ID (auto-selected if omitted)")
     parser.add_argument("--style", default=None, help="Style instruction")
     parser.add_argument("--api-key", default=None, help="API key (or set MIMO_API_KEY)")

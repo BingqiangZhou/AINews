@@ -83,6 +83,6 @@
 
 ## 与现有 state 的关系
 
-- **不替代** `audio-to-social`/`ai-news-digest` 的 `state.json.publish.tracks`——那是编排器自己的总账，schema 不同（用 `gongzhonghao`/`boker` 别名）。
+- **不替代** `ai-news-digest` 的 `state.json.publish.tracks`——那是编排器自己的总账，schema 不同（用 `gongzhonghao`/`boker` 别名）。
 - **不污染** `article-studio` 的 `state.json`（写作器状态，无发布概念）。
 - publish.json 是 browser-publisher 层的统一记录，编排器未来可读它回填自己的 state（本次不实现）。

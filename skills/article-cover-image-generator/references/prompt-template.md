@@ -83,7 +83,7 @@ A single abstract network of interconnected nodes rendered as precise geometric 
 - **title-subtitle**：`title "{标题}" with subtitle "{副标题}" below, in {font} typography`
 - **text-rich**：`multiple labels and tags ({具体标签词}) distributed across the composition in {font} typography`
 
-> **图内文字契约**：后端（Gaoding 万相2.7）只消费 prompt 正文。要画的具体中文必须写进正文，不能只放在 YAML frontmatter。详见 audio-to-social `illustration-prompt-agent.md` 的「图内文字契约」。
+> **图内文字契约**：后端（Gaoding 万相2.7）只消费 prompt 正文。要画的具体中文必须写进正文，不能只放在 YAML frontmatter。详见编排器的插图 prompt 规范的「图内文字契约」一节。
 
 ---
 

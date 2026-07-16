@@ -19,7 +19,7 @@
 | `media` | 各产物开关（封面/插图/播客/视频） |
 | `platforms` | 三平台开关与参数 |
 | `environment` | 工具路径 / API key 环境变量名 |
-| `reused_from_audio_to_social` | 只读复用 audio-to-social 的资产清单 |
+| `shared_assets_locations` | 跨 skill 共享资产的新位置（audio-to-social 已删除） |
 
 ---
 
@@ -97,28 +97,26 @@
 
 > **关键**：API key 存的是环境变量**名**而非值——安全且不与 shell profile 耦合。运行时由脚本 `os.environ[name]` 读取。
 
-## reused_from_audio_to_social
+## shared_assets_locations（跨 skill 共享资产位置）
 
-只读引用 audio-to-social 的资产（避免漂移）。每项是相对路径（相对本 skill 目录）：
+audio-to-social 目录已删除，共享资产按职能分散到各 skill。本 skill 的 config.json 是 brand/cover/image/tts/boker_next_episode 的单一来源；其余资产位置（相对本 skill 目录）：
 
 | 字段 | 引用目标 | 用途 |
 |------|---------|------|
-| `cover` | `../audio-to-social/config.json#cover` | 封面后端配置（Gaoding 等） |
-| `image` | `../audio-to-social/config.json#image` | 图片尺寸（cover_size 900x383 等） |
-| `tts` | `../audio-to-social/config.json#tts` | TTS 配置（MiMo 等） |
-| `boker_next_episode` | `../audio-to-social/config.json#platforms.boker_next_episode` | **集号单一来源**（与 audio-to-social 共享） |
-| `validate_quality_script` | `../audio-to-social/scripts/validate_content_quality.py` | 内容质检脚本（article-studio 复用） |
-| `backup_file_script` | `../audio-to-social/scripts/backup_file.py` | 覆盖前备份 |
-| `bump_episode_script` | `../audio-to-social/scripts/bump_episode.py` | 集号递增（发布后） |
-| `compress_images_script` | `../audio-to-social/scripts/compress_images.py` | 图片压缩（归档时） |
-| `reconcile_media_script` | `../audio-to-social/scripts/reconcile_media.py` | 一致性检查（归档时） |
-| `voice_ref_wav` | `../audio-to-social/scripts/voice_ref.wav` | TTS 克隆参考音频（播客用） |
-| `brand_config` | `../audio-to-social/references/brand-config.md` | 品牌声音定义（AI 小周人设来源） |
+| `lib_utils` | `../whisper-transcribe/scripts/lib/utils.py` | 管线工具库（whisper/video 用） |
+| `voice_ref_wav` | `../tts-generation/scripts/voice_ref.wav` | TTS 克隆参考音频（播客用） |
+| `brand_config` | `../article-studio/references/brand-config.md` | 品牌声音定义（AI 小周人设来源） |
+| `validate_content_quality_script` | `../article-studio/scripts/validate_content_quality.py` | 内容质检脚本 |
+| `backup_file_script` | `./scripts/backup_file.py` | 覆盖前备份（本 skill） |
+| `bump_episode_script` | `./scripts/bump_episode.py` | 集号递增（本 skill，发布后） |
+| `compress_images_script` | `./scripts/compress_images.py` | 图片压缩（本 skill，归档时） |
+| `reconcile_media_script` | `./scripts/reconcile_media.py` | 一致性检查（本 skill，归档时） |
+| `agent_shared_base` | `./agents/_shared_base.md` | 跨 skill agent 底座（本 skill） |
 
 ## 首次运行引导
 
 首次运行（config.json 不存在或字段缺失）时，引导式生成：
-1. `brand.storage_root`：问用户输出根目录（默认与 audio-to-social 同）。
+1. `brand.storage_root`：问用户输出根目录（默认空串 = 项目根）。
 2. `sources.categories`：问聚焦哪些分类（默认 Artificial_Intelligence）。
 3. `media.*_enabled`：问要产出哪些形态（默认全开）。
 4. `environment.*`：检测 conda_python / ffmpeg 是否在 PATH。
@@ -126,4 +124,4 @@
 
 ## config 备份
 
-config.json 同目录维护 `config-backup-{timestamp}.json`（最多 3 份），由 audio-to-social 的 `backup_file.py` 轮转。
+config.json 同目录维护 `config-backup-{timestamp}.json`（最多 3 份），由本 skill 的 `backup_file.py` 轮转。
