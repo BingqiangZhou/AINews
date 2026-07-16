@@ -3,7 +3,7 @@
 > 本文件是品牌声音和目录结构的参考，由主 agent 初始化时按需加载。
 
 ## 基本信息
-- **品牌名**：幸运喜欢藏在努力里
+- **品牌名**：AINews
 - **存储根目录**：从 config.json 的 `brand.storage_root` 读取
 - **文件夹命名**：`articles/{YYYY-MM-DD}_{标题}/`（扁平，storage_root 下的 articles/ 目录，无月度子文件夹）
 

@@ -1,5 +1,5 @@
 """
-MiMo-V2.5-TTS wrapper for audio-to-social / highlight pipelines.
+MiMo-V2.5-TTS wrapper for the tts-generation skill.
 
 Usage:
   # Built-in voice mode (default)

@@ -7,7 +7,7 @@
 ## 输入
 - `source_file`：`{output_dir}/temp/source.txt`
 - `episode_number`：集号（**仅用于 state 记录，不报进脚本/标题**——播客不播集数）
-- `brand_name`：幸运喜欢藏在努力里
+- `brand_name`：AINews
 - `segments_file`：`<文章目录>/imgs/segments.json`（article-illustrator 产出，含 illustration_meta）。读它来按章节分段并对齐图内容。
 
 ## 输出
@@ -25,7 +25,7 @@
 
 ## 叙事弧
 - Cold Open 钩子：<反问/痛点/悬念/具体场景，从源文找最抓人的点；不许问候>
-- 报家门位置：<cold open 落钩后，第几段插入；模板“对了，这里是幸运喜欢藏在努力里，今天讲<主题>”（**不报集数**）>
+- 报家门位置：<cold open 落钩后，第几段插入；模板“对了，这里是 AINews，今天讲<主题>”（**不报集数**）>
 - Promise：<一句话承诺>
 - Body 要点（按 section，结论先行）：
   - 若文章目录有 `imgs/segments.json`（article-illustrator 产出的章节→插图分段），**按 segment 分组**写要点，每组对应文章一个章节（与插图一一对应）。格式：

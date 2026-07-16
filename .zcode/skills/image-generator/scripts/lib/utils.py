@@ -9,7 +9,6 @@ binary-download helpers.
 Functions:
     get_api_key(args_api_key)                     — resolve AGNES_API_KEY (arg > env)
     load_config(config_path=None)                 — read skill config.json (single source of truth)
-    derive_video_query_base(base_url)             — root origin for the /agnesapi polling endpoint
     download_file(url, output_path, ...)          — streaming download with retries
 """
 
@@ -62,43 +61,6 @@ def load_config(config_path: str | os.PathLike | None = None) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         return {}
-
-
-def derive_video_query_base(base_url: str) -> str:
-    """Derive the root origin used by the irregular ``/agnesapi`` poll endpoint.
-
-    The Agnes video API has one endpoint that does NOT sit under ``/v1``: the
-    task-status query is ``GET {root}/agnesapi?video_id=...`` (see
-    references/api.md §3). All other endpoints are ``{base_url}/...`` where
-    ``base_url`` ends in ``/v1``. Without this derivation, ``--base-url`` would
-    steer creation/download to a custom host but leave polling pinned to the
-    hardcoded production URL, splitting the flow across two hosts.
-
-    Rules (in order):
-      1. Strip a trailing slash, then strip a trailing ``/v1``.
-      2. If the result still contains a path (e.g. ``https://host/api``),
-         fall back to the bare origin ``scheme://host[:port]`` — the polling
-         endpoint lives at the host root.
-
-    Examples:
-      >>> derive_video_query_base("https://apihub.agnes-ai.com/v1")
-      'https://apihub.agnes-ai.com'
-      >>> derive_video_query_base("https://apihub.agnes-ai.com/v1/")
-      'https://apihub.agnes-ai.com'
-      >>> derive_video_query_base("https://custom.example.com/v1")
-      'https://custom.example.com'
-      >>> derive_video_query_base("https://host/api")
-      'https://host'
-    """
-    from urllib.parse import urlsplit
-
-    url = base_url.rstrip("/")
-    if url.endswith("/v1"):
-        return url[:-3]
-    parts = urlsplit(base_url)
-    host = parts.hostname or ""
-    port_part = f":{parts.port}" if parts.port is not None else ""
-    return f"{parts.scheme}://{host}{port_part}"
 
 
 def download_file(

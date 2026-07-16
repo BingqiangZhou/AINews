@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Shared utilities for highlight-render-hyperframes scripts.
+Shared utilities for article-to-video scripts.
 
 Provides common functions for:
 - Audio duration probing (ffprobe wrapper)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Shared utilities for podcast-highlight-to-video scripts.
+Shared utilities for audio-to-social scripts.
 
 Provides common functions for:
 - Audio duration probing (ffprobe wrapper)
