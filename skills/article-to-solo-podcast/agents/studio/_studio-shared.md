@@ -1,6 +1,6 @@
 # Studio 共享定义 - article-to-solo-podcast 编剧室
 
-所有 studio 子 agent 先读本文件，再读 `agents/_shared.md`（项目级共享，含反虚构/备份/错误码），再读 `references/craft.md`（写作心法真源），再读各自合约。
+所有 studio 子 agent 先读本文件，再读 `agents/_shared.md`（skill 级共享，含反虚构/备份/错误码；其通用底座在 `audio-to-social/agents/_shared_base.md`），再读 `references/craft.md`（写作心法真源），再读各自合约。
 
 ## 路径常量（继承自 _shared.md）
 

@@ -41,7 +41,8 @@
   "whisper": {
     "model": "large-v3-turbo",
     "device": "cuda",
-    "lang": "zh"
+    "lang": "zh",
+    "_note": "本块是 article-to-video 调用 whisper-transcribe 时的参数，被 align_captions.py 读取。model 值与 whisper-transcribe/config.json#default_whisper_model 保持一致（单一权威源在 whisper-transcribe），修改时双向同步。"
   },
   "environment": {
     "conda_python": "python",

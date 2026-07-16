@@ -1,6 +1,17 @@
 #!/usr/bin/env python3
 """
-Shared utilities for audio-to-social scripts.
+Cross-skill shared pipeline utilities (canonical source).
+
+This module is the single source of the pipeline utility surface. It lives in
+`audio-to-social` (the de-facto shared-scripts hub; see AGENTS.md "Config reuse
+points at audio-to-social") and is imported read-only by other skills:
+
+  - whisper-transcribe/scripts/transcribe-faster-whisper.py
+  - article-to-video/scripts/align_captions.py
+
+Sibling skills MUST NOT keep their own copy; they `sys.path.insert` to this
+script dir and `from lib.utils import ...` (same pattern as
+article-to-solo-podcast/scripts/solo_tts.py importing tts-generation).
 
 Provides common functions for:
 - Audio duration probing (ffprobe wrapper)
@@ -12,6 +23,7 @@ Provides common functions for:
 - Logging setup
 - Pipeline exception hierarchy
 - Text normalization
+- Podcast artifact path resolution (shared with article-to-video)
 """
 
 from __future__ import annotations
@@ -179,20 +191,36 @@ def get_config() -> Dict[str, Any]:
 
 
 def get_ffprobe_path() -> str:
-    """Get ffprobe executable path: env var AINews_FFPROBE > config > 'ffprobe' on PATH."""
+    """Get ffprobe executable path: env var AINews_FFPROBE > config > 'ffprobe' on PATH.
+
+    Reads either the legacy flat key ``ffprobe_path`` or the canonical nested
+    key ``environment.ffprobe`` (AGENTS.md convention), so config.json can use
+    either naming without breaking path resolution.
+    """
     env = os.environ.get("AINews_FFPROBE")
     if env:
         return env
     config = load_config()
+    env_block = config.get("environment", {})
+    if isinstance(env_block, dict) and env_block.get("ffprobe"):
+        return env_block["ffprobe"]
     return config.get("ffprobe_path", "ffprobe")
 
 
 def get_ffmpeg_path() -> str:
-    """Get ffmpeg executable path: env var AINews_FFMPEG > config > 'ffmpeg' on PATH."""
+    """Get ffmpeg executable path: env var AINews_FFMPEG > config > 'ffmpeg' on PATH.
+
+    Reads either the legacy flat key ``ffmpeg_path`` or the canonical nested
+    key ``environment.ffmpeg`` (AGENTS.md convention), so config.json can use
+    either naming without breaking path resolution.
+    """
     env = os.environ.get("AINews_FFMPEG")
     if env:
         return env
     config = load_config()
+    env_block = config.get("environment", {})
+    if isinstance(env_block, dict) and env_block.get("ffmpeg"):
+        return env_block["ffmpeg"]
     return config.get("ffmpeg_path", "ffmpeg")
 
 
@@ -293,6 +321,36 @@ _NORMALIZE_RE = _build_normalize_re()
 def normalize_for_match(text: str) -> str:
     """Normalize text for fuzzy matching by stripping whitespace and punctuation."""
     return _NORMALIZE_RE.sub("", text)
+
+
+# ---------------------------------------------------------------------------
+# Podcast artifact path resolution
+# ---------------------------------------------------------------------------
+
+def resolve_podcast_path(article_dir: Path | str, filename: str) -> Path:
+    """Resolve a podcast artifact (播客_TTS.mp3 / 播客_脚本.txt) under an article dir.
+
+    article-to-solo-podcast writes its outputs to `<文章目录>/_podcast/` (its
+    SKILL.md rule 6), while article-to-video historically expected them at the
+    article root. This resolver bridges both layouts.
+
+    Lookup priority:
+      1. `_podcast/<filename>` (canonical, current article-to-solo-podcast output)
+      2. `<filename>` at the article root (backward compatibility)
+      3. If neither exists, return the `_podcast/<filename>` path so that the
+         caller's "file not found" error points at the canonical location.
+
+    Returns:
+        Absolute Path to the resolved artifact.
+    """
+    article = Path(article_dir).resolve()
+    podcast_subdir = article / "_podcast" / filename
+    if podcast_subdir.exists():
+        return podcast_subdir
+    root_path = article / filename
+    if root_path.exists():
+        return root_path
+    return podcast_subdir
 
 
 # ---------------------------------------------------------------------------

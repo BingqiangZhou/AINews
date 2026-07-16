@@ -35,8 +35,12 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Callable, Dict, Generator, List, Optional
 
-# Import shared utilities
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+# Shared pipeline utilities live in the canonical source at
+# audio-to-social/scripts/lib/utils.py (the cross-skill shared-scripts hub;
+# see AGENTS.md). This skill no longer keeps a local copy — the local empty
+# lib/ package was removed so `lib` resolves to audio-to-social's.
+_A2S_SCRIPTS = Path(__file__).resolve().parent.parent.parent / "audio-to-social" / "scripts"
+sys.path.insert(0, str(_A2S_SCRIPTS))
 from lib.utils import load_config, setup_windows_encoding, write_json
 
 MODEL_CHOICES = ["tiny", "base", "small", "medium", "large-v2", "large-v3", "large-v3-turbo"]

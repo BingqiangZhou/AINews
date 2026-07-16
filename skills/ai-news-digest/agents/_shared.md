@@ -1,6 +1,8 @@
 # 共享规则（所有子 agent 先读）
 
 > 本文件定义所有子 agent 共享的路径常量、返回格式、反虚构硬约束、错误码。子 agent 委派前先加载。
+>
+> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、集号单一源、默认不回退）的权威底座在 `audio-to-social/agents/_shared_base.md`。本文件 inline 保留关键不变量（子 agent 不一定 follow 相对链接），并补充本 skill 专属内容（RSS 信源、AI 小周人设、日报路径常量）。
 
 ## 路径常量
 

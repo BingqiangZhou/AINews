@@ -54,7 +54,7 @@
 
 ## 二、去 AI 腔 / 口语化
 
-机器预检（`validate_content_quality.py`）能查出**硬 AI 腔**（blocklist 短语：首先/其次/综上所述/值得等等）。但还有一类**软 AI 腔**机器查不出、读者一眼能感觉到——本块解决这个。
+机器预检（`validate_content_quality.py`）能查出**硬 AI 腔**（blocklist 短语，单一权威源 `audio-to-social/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段，如首先/其次/综上所述/值得一提等）。但还有一类**软 AI 腔**机器查不出、读者一眼能感觉到——本块解决这个。
 
 ### 软 AI 腔的 5 个信号（自查）
 

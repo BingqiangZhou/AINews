@@ -18,18 +18,8 @@
     "max_chars": 2500,
     "max_para_chars": 80,
     "target_minutes": "8-12",
-    "machine_word_blocklist": [
-      "首先",
-      "其次",
-      "再次",
-      "综上所述",
-      "总而言之",
-      "值得一提的是",
-      "不可否认",
-      "毋庸置疑",
-      "不难发现",
-      "众所周知"
-    ]
+    "machine_word_blocklist_extra": [],
+    "_note_machine_words": "AI-腔禁用词单一权威源 = audio-to-social/references/brand-config.md 的 '## 禁用 AI 腔短语'（validate_solo_script.py 运行时解析，与 validate_content_quality.py 同源）。本字段 machine_word_blocklist_extra 仅用于追加该列表之外的补充词，默认为空。"
   },
   "evaluation": {
     "max_fix_rounds": 3,

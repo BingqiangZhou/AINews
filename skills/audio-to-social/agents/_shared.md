@@ -2,6 +2,8 @@
 
 所有子代理先读本文件，再读各自的合同。
 
+> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、集号单一源、默认不回退）的权威底座在**本 skill** 的 `agents/_shared_base.md`。本文件 inline 保留关键不变量，并补充本 skill 专属内容（转录信源、a2s 路径常量、品牌名）。本 skill 既是编排器，也是共享资产/脚本/config 的复用枢纽（见 AGENTS.md）。
+
 > 本 skill 是**纯编排器**：内容生产（文章/播客/封面/插图/视频）全部委派下游 skill。本 skill 自身只剩 `audio-engineer` 一个子 agent（Phase 1 转录编排）。下游委派契约见 `references/delegation-contracts.md`。
 
 ## 路径常量

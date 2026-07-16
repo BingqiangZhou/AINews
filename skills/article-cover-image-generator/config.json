@@ -28,5 +28,8 @@
     "language": "auto",
     "disabled_presets": [],
     "preferred_palettes": []
+  },
+  "_reused_from_audio_to_social": {
+    "_note": "cover.{provider,model,gaoding_model,jimeng_model} 与 audio-to-social/config.json#cover 保持同值——模型名单一权威源在 audio-to-social，本字段被 cover-generator 工作流（SKILL.md '读取 config 的 cover 段'）读取，故保留但修改时须双向同步。fallback_to_agnes / palette / rendering / font 等为封面专属，仅此处定义。"
   }
 }

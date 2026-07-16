@@ -2,6 +2,8 @@
 
 所有子代理先读本文件，再读各自合同。
 
+> **继承关系**：通用跨 skill 规则（`<py>`/ffmpeg 解析、返回格式、文件写入 5 条、通用错误码、禁用词单一源）的权威底座在 `audio-to-social/agents/_shared_base.md`。本文件 inline 保留关键不变量，并补充本 skill 专属内容（RESEARCH_FILE 信源、分寸红线、6 类文章 profile、专属错误码 FIDELITY_VIOLATION/REDLINE_VIOLATION 等）。
+
 ## 路径常量
 
 | 常量 | 路径 |
@@ -72,9 +74,7 @@ writer 在 DRAFT/FIX 时按当前类型子集自查，content-editor（内容主
 
 ## 禁用 AI 腔短语（blocklist）
 
-权威列表见 `A2S_ROOT/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段。`validate_content_quality.py` 运行时从该文件解析（**非硬编码**）。生成前必读。
-
-典型禁用项：`首先 / 其次 / 再次 / 综上所述 / 总而言之 / 值得一提的是 / 不可否认 / 毋庸置疑 / 不难发现 / 众所周知` 等。
+**单一权威源**：`audio-to-social/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段（跨 skill 共享，article-to-solo-podcast 的 `validate_solo_script.py` 也解析同一文件）。`validate_content_quality.py` 运行时从该文件解析（**非硬编码**）。生成前必读该文件；不在本文件罗列禁用词，以免与权威源漂移。
 
 ## Prompt 先落盘
 

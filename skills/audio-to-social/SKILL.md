@@ -141,15 +141,7 @@ articles/{YYYY-MM-DD}_{标题}/          ← 唯一项目根（Phase 0 决定标
 
 **Phase 4 — 播客（委派 article-to-solo-podcast）**：**前置：Phase 3b-prepare 完成**（segments.json 就绪）。传 `--input <article_dir>/公众号_文章.md`。conductor 读 `imgs/segments.json` 按 segment 分组要点 + 据 illustration_meta 对齐图内容。它读 `config.platforms.boker_next_episode` 做集号、`voice_ref.wav` 做 TTS 克隆、`tts-generation` 做 MiMo 合成。输出嵌套 `<article_dir>/_podcast/`。与 Phase 3b-render 并行。
 
-**Phase 5 — 视频（委派 article-to-video）**：等 Phase 3（插图回写）+ Phase 4（播客音频）完成后，顺序调 5 个脚本（各带 `--article-dir "<article_dir>"`，阶段间读 `_video/state.json` 续跑）：
-```bash
-<py> <a2v_scripts>/align_captions.py --article-dir "<dir>" --force
-<py> <a2v_scripts>/plan_scenes.py     --article-dir "<dir>"
-<py> <a2v_scripts>/render_kenburns.py --article-dir "<dir>"
-<py> <a2v_scripts>/captions_to_ass.py --article-dir "<dir>"
-<py> <a2v_scripts>/compose_video.py   --article-dir "<dir>"
-```
-其中 `<a2v_scripts>` = `skills/article-to-video/scripts`。产 `<article_dir>/_video/公众号_视频.mp4`。
+**Phase 5 — 视频（委派 article-to-video）**：等 Phase 3（插图回写）+ Phase 4（播客音频）完成后，顺序调 5 个脚本（各带 `--article-dir "<article_dir>"`，阶段间读 `_video/state.json` 续跑）。**5 脚本权威调用序列见 `article-to-video/SKILL.md` 的"### 脚本调用示例"**（被委派 skill 固化，不在本文件重复 bash 块以免漂移）；编排器视角的完整契约（前置条件/输出/断点续跑）见 [delegation-contracts.md Phase 5](references/delegation-contracts.md)。`<a2v_scripts>` = `skills/article-to-video/scripts`。产 `<article_dir>/_video/公众号_视频.mp4`。
 
 **Phase 6 — 归档（内联）**：详见 [phase7-verify-archive](references/phase7-verify-archive.md)。`scripts/reconcile_media.py`（校验封面+插图+引用一致性，路径适配新布局）与 `scripts/compress_images.py` 并行。终检所有产物存在且非空。
 

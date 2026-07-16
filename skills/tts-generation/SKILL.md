@@ -23,7 +23,7 @@ synthesize(
     text="要合成的文本",
     output_path="output.mp3",
     clone=True,                          # 克隆模式（False=内置音色）
-    ref_audio="voice_ref.wav",           # 克隆参考音频（默认用脚本内置 voice_ref.wav）
+    ref_audio="voice_ref.wav",           # 克隆参考音频（默认指向 audio-to-social 的单一源 voice_ref.wav）
     model="mimo-v2.5-tts-voiceclone",    # 不传则按 clone 自动选择
     api_key=os.environ["MIMO_API_KEY"],
 )
@@ -38,7 +38,7 @@ synthesize(
 # 内联文本
 <py> <scripts>/mimo_tts.py --text "要合成的文本" --output audio.mp3
 
-# 声音克隆（用脚本内置默认参考音频 voice_ref.wav）
+# 声音克隆（默认参考音频复用 audio-to-social/scripts/voice_ref.wav，单一源）
 <py> <scripts>/mimo_tts.py --input text.txt --output audio.mp3 --clone
 
 # 声音克隆 + 自定义参考音频
@@ -54,7 +54,7 @@ def synthesize(
     *,
     voice: str = "苏打",           # 内置音色名（clone 模式下忽略）
     clone: bool = False,           # True=声音克隆，False=内置音色
-    ref_audio: str | None = None,  # 克隆参考音频路径（默认: 同目录 voice_ref.wav）
+    ref_audio: str | None = None,  # 克隆参考音频路径（默认: ../audio-to-social/scripts/voice_ref.wav，单一源）
     model: str | None = None,      # 模型 ID（不传按 clone 自动选：clone→mimo-v2.5-tts-voiceclone，内置→mimo-v2.5-tts）
     style: str | None = None,      # 风格指令（可选）
     api_key: str = "",             # 留空则 CLI 层从 MIMO_API_KEY 读取

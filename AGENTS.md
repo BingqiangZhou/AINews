@@ -38,11 +38,25 @@ Each skill folder follows the same shape: `SKILL.md` (frontmatter + flow) + `con
 - **Config reuse points at `audio-to-social/config.json`** (read-only from other skills): cover/image/tts settings and — critically — `platforms.boker_next_episode`, the **single source of the boker episode number**.
 - **Episode number is shared.** `ai-news-digest` and `audio-to-social` read the same `boker_next_episode`. Don't run both the same day (episode race). Only `bump_episode.py` (after successful publish) writes it.
 
+## Shared code & docs single-sourcing
+
+`audio-to-social` is the de-facto **shared-scripts / shared-config / shared-docs hub** (not just a peer orchestrator). These single-source rules were consolidated to kill drift:
+
+- **`scripts/lib/utils.py` canonical copy lives in `audio-to-social/scripts/lib/`.** `whisper-transcribe` and `article-to-video` MUST NOT keep their own copy:
+  - `whisper-transcribe/scripts/transcribe-faster-whisper.py` `sys.path.insert`s audio-to-social's `scripts/` and `from lib.utils import ...` (its own `lib/` dir was removed).
+  - `article-to-video/scripts/lib/utils.py` is a **thin re-export shim** (loads audio-to-social's utils via `importlib` by absolute path, re-exports the public surface) — needed because article-to-video keeps its own `lib/caption_align.py` (vendored), and two same-named `lib` packages can't both win `sys.path`. The shim's only job is forwarding; do not add logic there.
+  - `image-generator/scripts/lib/utils.py` and `browser-publisher/scripts/lib/utils.py` are **unrelated** modules (AGNES helpers / WeChat HTTP helpers) — different content, same filename, leave as-is.
+- **`voice_ref.wav` single copy** at `audio-to-social/scripts/voice_ref.wav`. `tts-generation/scripts/mimo_tts.py` resolves its default ref audio to `../../audio-to-social/scripts/voice_ref.wav`; no other copy exists.
+- **AI-腔禁用词 (banned-phrase blocklist) single source** = `audio-to-social/references/brand-config.md` (`## 禁用 AI 腔短语`). Both `article-studio/.../validate_content_quality.py` and `article-to-solo-podcast/.../validate_solo_script.py` parse this same file at runtime. `article-to-solo-podcast/config.json#content.machine_word_blocklist_extra` is an optional *additive* list (default `[]`), NOT a parallel source. Never inline the phrase list in skill docs — link to brand-config.md.
+- **`agents/_shared_base.md`** (in `audio-to-social/agents/`) is the cross-skill base contract: `<py>`/ffmpeg resolution, unified return format, 5 file-write rules, shared error codes, episode single-source, "默认不回退". Each skill's `agents/_shared.md` inherits it (inline-copies the load-bearing invariants, since sub-agents may not follow relative links) and adds skill-specific deltas (paths, persona, source-specific anti-fabrication, skill-specific error codes).
+- **article-to-video 5-script invocation** canonical bash lives in `article-to-video/SKILL.md` ("### 脚本调用示例"). Both orchestrators' `delegation-contracts.md` and `audio-to-social/SKILL.md` reference it rather than duplicating the block.
+- **`config.json` field naming**: prefer `environment.conda_python` / `environment.ffmpeg` / `environment.ffprobe` (nested). `audio-to-social/scripts/lib/utils.py`'s `get_ffmpeg_path()`/`get_ffprobe_path()` accept both the nested `environment.*` and legacy flat `ffmpeg_path`/`ffprobe_path` keys. Mirrored model names (`mimo-v2.5-tts-voiceclone`, `万相2.7`, …) live once in `audio-to-social/config.json`; downstream skills express the relationship via a `reused_from_audio_to_social` (or `_reused_from_audio_to_social`) block rather than re-declaring the values (fields actually read by a skill's own workflow are kept, with a `_note` flagging the sync relationship).
+
 ## Command & runtime conventions
 
-- **`<py>` = the Python interpreter resolved by the plugin.** Resolution order: env var `AINews_PYTHON` → each skill's `config.environment.conda_python` (or `python_executable`) → `python` on PATH. In Claude Code this is auto-populated from the plugin's `conda_python` userConfig via the `SessionStart` hook. Never assume a hardcoded absolute path.
+- **`<py>` = the Python interpreter resolved by the plugin.** Resolution order: env var `AINews_PYTHON` → each skill's `config.environment.conda_python` (legacy flat `python_executable`/`conda_python` also accepted) → `python` on PATH. In Claude Code this is auto-populated from the plugin's `conda_python` userConfig via the `SessionStart` hook. Never assume a hardcoded absolute path.
 - Scripts are run as `<py> skills/<skill>/scripts/<x>.py ...` with absolute or repo-relative paths (CWD = repo root).
-- ffmpeg resolves via `AINews_FFMPEG` → `config.*.ffmpeg_path` → `ffmpeg` on PATH; CJK subtitle font via `AINews_FONT` → `config.font` → platform default. Paths are Windows; the repo runs on win32.
+- ffmpeg/ffprobe resolve via `AINews_FFMPEG`/`AINews_FFPROBE` → `config.environment.ffmpeg`/`ffprobe` (or legacy `config.ffmpeg_path`/`ffprobe_path`) → on PATH; CJK subtitle font via `AINews_FONT` → `config.font` → platform default. Paths are Windows; the repo runs on win32.
 - **Secrets are env vars only** (`WECHAT_MP_APPID`, `WECHAT_MP_APPSECRET`, `MIMO_API_KEY`, `AGNES_API_KEY`); never committed. Browser login state lives under `skills/browser-publisher/configs/browser-auth/` (gitignored).
 - **Dates = today, Beijing time (UTC+8)**, `YYYY-MM-DD`. Event dates come from RSS `published`; if missing, mark "（具体日期未公布）" — never fabricate.
 - Invoke a skill via its slash command, e.g. `/ai-news-digest`.

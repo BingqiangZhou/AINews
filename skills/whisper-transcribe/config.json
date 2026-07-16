@@ -1,7 +1,13 @@
 {
-  "python_executable": "python",
-  "ffmpeg_path": "ffmpeg",
-  "ffprobe_path": "ffprobe",
+  "environment": {
+    "conda_python": "python",
+    "ffmpeg": "ffmpeg",
+    "ffprobe": "ffprobe"
+  },
   "default_timeout": 30,
-  "default_whisper_model": "large-v3-turbo"
+  "default_whisper_model": "large-v3-turbo",
+  "reused_from_audio_to_social": {
+    "_note": "shared lib/utils.py 的单一权威源在 audio-to-social/scripts/lib/utils.py（本 skill 不再保留本地副本）。",
+    "lib_utils": "../audio-to-social/scripts/lib/utils.py"
+  }
 }

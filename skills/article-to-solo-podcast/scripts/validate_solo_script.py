@@ -8,7 +8,9 @@ validate_solo_script.py — 单人播客脚本的确定性预检（LLM judge 之
   - 元数据：标题（去集号前缀）≤35字、简介字数 ∈ [200,300]、标签 5-8、集号前缀格式 {dddd}：
 
 软警告（写入报告但不影响 exit）：
-  - 机器味词命中（config.content.machine_word_blocklist），逐处给位置+上下文
+  - 机器味词命中（单一权威源：audio-to-social/references/brand-config.md 的
+    "## 禁用 AI 腔短语"，与 validate_content_quality.py 同源；config.content.
+    machine_word_blocklist_extra 若提供则作为补充词，默认不再维护并行列表）
 
 Usage:
   python validate_solo_script.py --script 播客_脚本.txt --meta 播客_标题与描述.txt [--config config.json]
@@ -19,6 +21,45 @@ import json
 import re
 import sys
 from pathlib import Path
+
+
+# AI-腔禁用词的单一权威源：audio-to-social/references/brand-config.md
+# （与 article-studio 的 validate_content_quality.py 解析同一文件，避免两份
+# 冲突的"权威"列表漂移）。config.content.machine_word_blocklist_extra 仍可作为
+# 补充词，但默认不再维护并行的禁用词列表。
+_BRAND_CONFIG_PATH = (
+    Path(__file__).resolve().parents[2]  # skills/
+    / "audio-to-social" / "references" / "brand-config.md"
+)
+
+# Emergency fallback only, used if brand-config.md is unreadable. Keep in sync
+# with the doc; it is NOT a parallel source of truth.
+_FALLBACK_MACHINE_WORDS = [
+    "值得一提", "不得不承认", "总的来说", "综上所述", "首先", "其次",
+    "然而", "与此同时", "不仅如此", "显著提升", "深入探讨",
+    "不可忽视", "众所周知", "毋庸置疑", "不言而喻",
+]
+
+
+def _load_brand_machine_words(path: Path = _BRAND_CONFIG_PATH) -> list[str]:
+    """Parse brand-config.md "## 禁用 AI 腔短语" into a flat machine-word list.
+
+    Mirrors validate_content_quality.py's _load_banned_phrases() but collapses
+    the always/paragraph-start distinction into one list (this validator only
+    emits soft warnings, so positional nuance is not needed here).
+    """
+    if not path.exists():
+        return list(_FALLBACK_MACHINE_WORDS)
+    text = path.read_text(encoding="utf-8-sig")
+    section = re.search(r"##\s*禁用 AI 腔短语(.*?)(?=\n##\s|\Z)", text, flags=re.DOTALL)
+    if not section:
+        return list(_FALLBACK_MACHINE_WORDS)
+    words: list[str] = []
+    for phrase, _note in re.findall(r"`([^`]+)`(（[^）]*）)?", section.group(1)):
+        # Only accept CJK phrases; skip stray inline-code tokens in the prose.
+        if re.search(r"[一-鿿]", phrase):
+            words.append(phrase)
+    return words or list(_FALLBACK_MACHINE_WORDS)
 
 
 def load_config(path):
@@ -177,8 +218,13 @@ def main():
     if re.search(r"[A-Za-z]{4,}", title_body[:10]):
         title_warnings.append("title_english_heavy_prefix")
 
-    # 软警告：机器词
-    hits = check_machine_words(text, cfg["content"]["machine_word_blocklist"])
+    # 软警告：机器词——单一权威源 brand-config.md，config.content.machine_word_blocklist_extra
+    # 若提供则作为补充词（去重合并），默认不再维护并行列表。
+    machine_words = _load_brand_machine_words()
+    extra = cfg.get("content", {}).get("machine_word_blocklist_extra", []) or []
+    if extra:
+        machine_words = list(dict.fromkeys(machine_words + list(extra)))
+    hits = check_machine_words(text, machine_words)
 
     report = {
         "hard_fail": hard_fail,

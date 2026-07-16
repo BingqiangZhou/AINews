@@ -174,13 +174,11 @@ article-to-solo-podcast 自动读：
 
 ### 调用（顺序，各带 `--article-dir`，阶段间读 `_video/state.json` 续跑）
 
-```bash
-<py> <a2v_scripts>/align_captions.py --article-dir "<article_dir>" --force
-<py> <a2v_scripts>/plan_scenes.py     --article-dir "<article_dir>"
-<py> <a2v_scripts>/render_kenburns.py --article-dir "<article_dir>"
-<py> <a2v_scripts>/captions_to_ass.py --article-dir "<article_dir>"
-<py> <a2v_scripts>/compose_video.py   --article-dir "<article_dir>"
-```
+5 阶段脚本的**权威调用序列**见 `article-to-video/SKILL.md` 的"### 脚本调用示例"（被委派 skill 固化自己的调用契约，不在本文件重复 bash 块以免漂移）。编排器视角的要点：
+
+- `<a2v_scripts>` = `skills/article-to-video/scripts`（见本文件顶部路径常量）。
+- 5 脚本顺序固定：`align_captions.py`（带 `--force`）→ `plan_scenes.py` → `render_kenburns.py` → `captions_to_ass.py` → `compose_video.py`，各带 `--article-dir "<article_dir>"`。
+- 每个 `<py>` 由本编排器按 `AINews_PYTHON` → `config.environment.conda_python` → `python` 解析。
 
 ### 输出
 
