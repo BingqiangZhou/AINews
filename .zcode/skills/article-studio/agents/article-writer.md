@@ -2,7 +2,11 @@
 
 **必读**：先读 `agents/_shared.md` → `references/type-profiles.md`（按 `article_type` 加载对应 profile）→ `references/phase1-writing.md`（通用工艺底线）→ `references/writing-craft.md`（写作工艺强化：钩子/去AI腔/节奏/金句）→ 本文件。
 
-> **`source_mode: transcript` 时**：额外先读 [transcript-mode.md](../references/transcript-mode.md)。DRAFT 改为"口语转录转书面化改写"——保留核心观点与个人声音、保留不确定性/认知转折、插 `<!-- illustration -->` 占位符（2-4 个），零外部事实。事实真源是 `_research` 里的转录原文区。
+> **`source_mode: transcript` 时**：额外先读 [transcript-mode.md](../references/transcript-mode.md)。
+>
+> **news 清单分支**（`source_mode: transcript` + `article_type: news` + `config.news_digest_format.enabled`）：DRAFT 改为**轻包装清单排版**——把素材文件的资讯条目排成可扫读清单（`##` 主题组 + `###` 条目 + 事实/信源/日期 bullet + 极简开头/结尾），**不**做口语转书面改写、**不**写散文钩子/金句/趋势归纳。详见 transcript-mode.md「news 清单分支」。**触发此分支时跳过本文件 DRAFT 步骤 2-4 的散文写作工艺**（按 type-profiles.md news 清单骨架 + transcript-mode.md 清单分支执行）。
+>
+> 其余 transcript 情况（非 news，或 news 清单模式关闭）：DRAFT 改为"口语转录转书面化改写"——保留核心观点与个人声音、保留不确定性/认知转折、插 `<!-- illustration -->` 占位符（2-4 个），零外部事实。事实真源是 `_research` 里的转录原文区。
 
 ## 角色
 
@@ -38,6 +42,18 @@
 - `title_formula`（标题套路）
 - `redlines`（本类型启用的红线子集，对应 [redlines.md](../references/redlines.md) 编号）
 - `content_overrides`（字数/小节阈值的类型覆盖，缺省用 config 默认）
+
+### 1b. 清单模式分支判断（news + transcript + 清单开关开）
+
+若 `source_mode == "transcript"` 且 `article_type == "news"` 且 `config.news_digest_format.enabled == true`，**跳过下方步骤 2-4 的散文写作工艺**，改走 [transcript-mode.md](../references/transcript-mode.md)「news 清单分支」：
+
+- 按 type-profiles.md news profile 的**清单模式 structure 骨架**排版（`# 标题` → 极简开头 → `##` 主题组 → `###` 条目 + bullet → 极简 CTA 结尾 → AI 声明）。
+- 把 `RESEARCH_FILE` 的资讯 bullet 提升为 `### 条目标题` + 一句话事实 + `[信源](url) · 日期` + 可选点评。
+- **不做**散文钩子/金句/记忆点/趋势归纳/口语转书面改写（这些是盘点文模式或非 news 的工艺）。
+- 仍做：插图占位符（2-4）、首行 `# 标题`、反虚构（事实照搬素材、URL 照搬、日期缺失标"具体日期未公布"）、AI 声明、`公众号_摘要.txt`。
+- 字数用 `type_content_overrides.news`（清单模式 body_min 400、body_max 3000、sections 2-8）。
+
+> 清单模式分支执行完后，直接跳到步骤 5（事实保真）、6（红线自查）、7（格式）。步骤 2-4 不执行。
 
 ### 2. 按 `profile.structure` 骨架写
 

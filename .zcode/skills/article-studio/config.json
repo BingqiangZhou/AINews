@@ -17,7 +17,7 @@
   "type_content_overrides": {
     "howto": { "min_sections": 3, "body_max_chars": 3000 },
     "story": { "body_max_chars": 3000, "min_sections": 1 },
-    "news": { "max_sections": 8, "body_max_chars": 3000 },
+    "news": { "max_sections": 8, "body_max_chars": 3000, "body_min_chars": 400 },
     "profile": { "body_max_chars": 3000, "min_sections": 3 },
     "review": { "min_sections": 3, "body_max_chars": 3000 }
   },
@@ -58,6 +58,15 @@
     "source_label": "源转录",
     "require_source_url": false,
     "illustration_placeholders": { "min": 2, "max": 4 }
+  },
+  "news_digest_format": {
+    "comment": "source_mode=transcript + article_type=news 时触发。writer 走清单排版而非散文改写：极简开头+按主题##分组的资讯条目（###条目标题+事实+信源+日期）+极简CTA。详见 transcript-mode.md 的 news 清单分支。",
+    "enabled": true,
+    "intro_max_chars": 80,
+    "outro_max_chars": 120,
+    "per_item_structure": "一句话事实 + 信源链接 + 日期",
+    "allow_comment": true,
+    "comment_prefix": "点评："
   },
   "environment": {
     "conda_python": "D:\\Development\\miniconda3\\python.exe",
