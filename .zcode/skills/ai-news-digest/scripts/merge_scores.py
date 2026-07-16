@@ -46,19 +46,32 @@ def main() -> int:
     smap = {s["index"]: s for s in valid_scores}
     scored_n = len(valid_scores)
 
+    # 检查打分结果是否带 ai_related 字段（新版 prompt 输出）
+    has_ai_related = any("ai_related" in s for s in valid_scores)
+    if not has_ai_related:
+        log(f"警告: 打分结果缺 ai_related 字段（旧格式或模型未输出），跳过 AI 相关度硬过滤")
+
     ranked = []
     unmatched = 0
+    dropped_not_ai = 0
     for i, c in enumerate(cands[:scored_n], 1):
         s = smap.get(i)
         if not s:
             unmatched += 1
             continue
+        # AI 相关度硬过滤：ai_related == false 的条目直接剔除，不进 ranked
+        if has_ai_related and s.get("ai_related") is False:
+            dropped_not_ai += 1
+            continue
         out = dict(c)
         out["ai_score"] = s["score"]
         out["ai_summary"] = s["summary"]
+        out["ai_related"] = s.get("ai_related", True)
         ranked.append(out)
     if unmatched:
         log(f"警告: {unmatched} 条候选无对应打分，已跳过")
+    if dropped_not_ai:
+        log(f"AI 相关度硬过滤: 剔除 {dropped_not_ai} 条与 AI 无关的条目")
 
     ranked.sort(key=lambda x: (-x["ai_score"], -x.get("total_score", 0)))
     top = ranked[: args.top]
@@ -68,13 +81,14 @@ def main() -> int:
         "fetched_at": pre.get("fetched_at"),
         "input_count": pre.get("input_count"),
         "scored_count": scored_n,
+        "dropped_not_ai": dropped_not_ai,
         "final_count": len(top),
         "items": top,
     }
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
-    log(f"{len(cands)} 候选 → AI打分 {scored_n} 合并 → top {len(top)} 写入 {out_path}")
+    log(f"{len(cands)} 候选 → AI打分 {scored_n} 合并 → 剔除AI无关 {dropped_not_ai} → top {len(top)} 写入 {out_path}")
     return 0
 
 
