@@ -49,6 +49,12 @@
       "status": "completed",
       "digest_file": "temp/digest.md"
     },
+    "review": {
+      "status": "completed",
+      "report_file": "temp/review-report-1.json",
+      "actions_file": "temp/review_actions.json",
+      "verdict": "pass_with_fixes"
+    },
     "research": {
       "status": "completed",
       "research_file": "_research/事实素材与来源.md"
@@ -126,6 +132,7 @@
 - **prefilter**：`candidates_file`、`count`（预筛后条数）。
 - **score**：`prompt_file`（打分 prompt）、`result_file`（AI 打分结果 JSON）、`ranked_file`（合并排序后）、`final_top`。
 - **digest**：`digest_file`（Markdown 榜单，给人看）。
+- **review**：`report_file`（审核报告 JSON）、`actions_file`（修正指令 JSON，供 `apply_review.py` 消费；无修正时该文件可不存在）、`verdict`（`pass` / `pass_with_fixes`）。`config.scoring.review_enabled: false` 时 `status: "skipped"` 直接进 research。
 - **research**：`research_file`（事实素材文件，article-studio 的权威源）。
 - **article**：`article_file`、`summary_file`、`article_state_file`（article-studio 自己的 state，用于交叉检查）。
 - **media**：`cover`（封面）+ `illustrations`（插图，两步：prepare_done / render_done）。`illustrations.segments_file` 是 Phase 7c 播客的前置。

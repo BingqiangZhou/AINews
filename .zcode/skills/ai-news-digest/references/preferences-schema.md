@@ -51,6 +51,7 @@
 | `digest_final_top` | number | 20 | 最终榜单条数（merge_scores `--top`） |
 | `penalty_keywords` | string[] | 见 config | 推广词表（标题命中则剔除）；从 prefilter.py 的 DEFAULT 移出，便于按主题调 |
 | `max_per_source` | number | 5 | 同源封顶（防头部源刷屏） |
+| `review_enabled` | bool | true | Phase 4.5 榜单审核开关。开启时主 agent 按 `agents/digest-reviewer.md` 复核 4 维度后调 `apply_review.py` 修正；关闭时 `stages.review.status="skipped"` 跳过审核直接进 Phase 5 |
 | `article_min_words` | number | 900 | 文章最小字数（传给 article-studio + 质检脚本） |
 | `article_max_words` | number | 2000 | 文章最大字数 |
 
