@@ -24,7 +24,7 @@ Each skill folder follows the same shape: `SKILL.md` (frontmatter + flow) + `con
 | **article-studio** | Central writing skill. Any 公众号 article type; `transcript` mode = skip web research, source file is sole authority. Owns `references/brand-config.md` (brand voice + banned-phrase single source) + `scripts/validate_content_quality.py`. |
 | article-cover-image-generator | Cover image (900x383). |
 | article-illustrator | Article illustrations (prepare → render, rewrites `![]()` into article). |
-| article-to-solo-podcast | Article → single-voice podcast + TTS. Claims episode number. |
+| article-to-duo-podcast | Article → **dual-host dialogue podcast** (A=苏打/B=冰糖 互问互答) + dual-voice TTS. Claims episode number. |
 | article-to-video | Article + illustrations + podcast → landscape video (5 sequential CLI scripts). |
 | **browser-publisher** | Owns **ALL** publishing logic. Never rewrite publish code elsewhere; always delegate here. |
 | image-generator / tts-generation / whisper-transcribe | Shared media utilities. |
@@ -44,18 +44,18 @@ The old `audio-to-social/` directory (once a peer orchestrator, then a shared-as
 | Asset | Owner | Consumers |
 |-------|-------|-----------|
 | `scripts/lib/utils.py` | **whisper-transcribe** | whisper-transcribe (local), article-to-video (re-export shim) |
-| `scripts/voice_ref.wav` | **tts-generation** | tts-generation (local `mimo_tts.py` default), article-to-solo-podcast |
-| `references/brand-config.md` | **article-studio** | validate_content_quality.py (co-located), validate_solo_script.py, ai-news-digest |
+| `scripts/voice_ref.wav` | **tts-generation** | tts-generation (local `mimo_tts.py` default), article-to-duo-podcast |
+| `references/brand-config.md` | **article-studio** | validate_content_quality.py (co-located), validate_duo_script.py, ai-news-digest |
 | `scripts/validate_content_quality.py` | **article-studio** | article-studio Phase 2 (co-located with brand-config.md — it parses `../references/brand-config.md`) |
 | `scripts/backup_file.py` + `bump_episode.py` | **ai-news-digest** | bump_episode does `from backup_file import backup_file` (same-dir import) — they must co-locate |
 | `scripts/compress_images.py` + `reconcile_media.py` | **ai-news-digest** | Phase 8 archive (reconcile_media.py reads `../config.json`'s `image.cover_size` — co-located with config.json) |
-| `agents/_shared_base.md` | **ai-news-digest** | inherited by article-studio + article-to-solo-podcast `agents/_shared.md` |
+| `agents/_shared_base.md` | **ai-news-digest** | inherited by article-studio + article-to-duo-podcast `agents/_shared.md` |
 | `config.json` (brand/cover/image/tts/boker_next_episode/environment) | **ai-news-digest** | 9 skills read via `../ai-news-digest/config.json#field` |
 
 Key invariants (unchanged):
 - **`lib/utils.py`**: whisper-transcribe owns the canonical copy. `article-to-video/scripts/lib/utils.py` is a **thin re-export shim** (loads whisper's utils via `importlib` by absolute path) — needed because article-to-video keeps its own `lib/caption_align.py` (vendored), and two same-named `lib` packages can't both win `sys.path`. `image-generator/scripts/lib/utils.py` and `browser-publisher/scripts/lib/utils.py` are **unrelated** modules (AGNES/WeChat helpers), same filename, leave as-is.
 - **`voice_ref.wav`**: single copy at `tts-generation/scripts/voice_ref.wav` (gitignored as `skills/*/scripts/voice_ref.wav`); other skills reference via relative path.
-- **AI-腔禁用词 single source** = `article-studio/references/brand-config.md` (`## 禁用 AI 腔短语`). Both `validate_content_quality.py` (article-studio) and `validate_solo_script.py` (article-to-solo-podcast) parse it. `article-to-solo-podcast/config.json#content.machine_word_blocklist_extra` is an optional additive list only.
+- **AI-腔禁用词 single source** = `article-studio/references/brand-config.md` (`## 禁用 AI 腔短语`). Both `validate_content_quality.py` (article-studio) and `validate_duo_script.py` (article-to-duo-podcast) parse it. `article-to-duo-podcast/config.json#content.machine_word_blocklist_extra` is an optional additive list only.
 - **article-to-video 5-script invocation** canonical bash lives in `article-to-video/SKILL.md`; `ai-news-digest/references/delegation-contracts.md` references it.
 - **`config.json` field naming**: prefer `environment.conda_python`/`environment.ffmpeg`/`environment.ffprobe` (nested). `lib/utils.py`'s `get_ffmpeg_path()`/`get_ffprobe_path()` accept both nested and legacy flat keys. Mirrored model names live once in `ai-news-digest/config.json`; downstream skills flag the sync via `_note`/`_reused_*` blocks rather than re-declaring values.
 

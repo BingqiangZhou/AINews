@@ -40,7 +40,7 @@
     "boker": {"enabled": true},
     "douyin": {"enabled": true},
     "boker_next_episode": 1,
-    "_note_boker_next_episode": "集号单一来源（跨 skill 共享）。article-to-solo-podcast 读它定集号；本 skill 发布成功后调 scripts/bump_episode.py 递增。原位于 audio-to-social/config.json。"
+    "_note_boker_next_episode": "集号单一来源（跨 skill 共享）。article-to-duo-podcast 读它定集号；本 skill 发布成功后调 scripts/bump_episode.py 递增。原位于 audio-to-social/config.json。"
   },
   "cover": {
     "_note": "封面后端配置（跨 skill 共享，cover-generator/image-generator 同步引用）。原位于 audio-to-social/config.json。",
@@ -62,7 +62,7 @@
     "illustration_size": "1920x1080"
   },
   "tts": {
-    "_note": "TTS 配置（跨 skill 共享，tts-generation/article-to-solo-podcast 同步引用）。原位于 audio-to-social/config.json。",
+    "_note": "TTS 配置（跨 skill 共享，tts-generation/article-to-duo-podcast 同步引用）。原位于 audio-to-social/config.json。",
     "provider": "mimo",
     "voice": "苏打",
     "model": "mimo-v2.5-tts-voiceclone",

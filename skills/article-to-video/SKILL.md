@@ -16,7 +16,7 @@ metadata:
 
 - **whisper-transcribe**：`scripts/transcribe-faster-whisper.py`——对播客 TTS 音频做 word-level 转录，产出 `whisper_segments.json`。subprocess 调用。
 - ~~**highlight-render-hyperframes**~~（已归档至 `_backup/skills/highlight-render-hyperframes`）：原只读复用其 `scripts/lib/caption_align.py`（字幕对齐核心库）、`scripts/lib/utils.py`（JSON/ffprobe 工具）、`scripts/generate-timeline-captions.py`（底层对齐编排函数）。**现已内化至本 skill `scripts/lib/` + `scripts/generate-timeline-captions.py`**。importlib + sys.path 复用。
-- **article-to-solo-podcast**：消费其产物（`公众号_文章.md` + `imgs/` + `公众号_封面.png` + `播客_TTS.mp3` + `播客_脚本.txt`）。如果文章目录缺播客音频/脚本，引导用户先跑 `article-to-solo-podcast`。上游公众号文章/插图/封面由编排器（如 ai-news-digest）及下游 article-studio / article-illustrator / article-cover-image-generator 产出。
+- **article-to-duo-podcast**：消费其产物（`公众号_文章.md` + `imgs/` + `公众号_封面.png` + `播客_TTS.mp3` + `播客_脚本.txt`）。如果文章目录缺播客音频/脚本，引导用户先跑 `article-to-duo-podcast`。上游公众号文章/插图/封面由编排器（如 ai-news-digest）及下游 article-studio / article-illustrator / article-cover-image-generator 产出。
 
 ## 流程概览
 
@@ -43,7 +43,7 @@ metadata:
 5. 输出目录 = `<文章目录>/_video/`。`temp/` 存中间件（whisper、timeline），`segments/` 存视频片段，最终产物 `公众号_视频.mp4` 在 `_video/` 根。
 
 **输入要求**
-6. 文章目录必须已含：`公众号_文章.md`（含 `![](imgs/NN-xxx.png)` 插图引用）、`imgs/` 目录（插图 PNG）、`公众号_封面.png`、`播客_TTS.mp3`、`播客_脚本.txt`。播客音频/脚本优先从 `_podcast/` 子目录读（`article-to-solo-podcast` 的 canonical 输出位），根目录作向后兼容；两者都缺时引导用户先跑 `article-to-solo-podcast`。路径解析统一走 `lib/utils.py` 的 `resolve_podcast_path`。
+6. 文章目录必须已含：`公众号_文章.md`（含 `![](imgs/NN-xxx.png)` 插图引用）、`imgs/` 目录（插图 PNG）、`公众号_封面.png`、`播客_TTS.mp3`、`播客_脚本.txt`。播客音频/脚本优先从 `_podcast/` 子目录读（`article-to-duo-podcast` 的 canonical 输出位），根目录作向后兼容；两者都缺时引导用户先跑 `article-to-duo-podcast`。路径解析统一走 `lib/utils.py` 的 `resolve_podcast_path`。
 
 ## 环境配置
 

@@ -73,4 +73,4 @@ articles/{YYYY-MM-DD}_{标题}/
 | 配图 | `article-illustrator` | `公众号_文章.md` |
 | 封面 | `article-cover-image-generator` | content_context（标题+核心论点） |
 | 公众号草稿上传 | `browser-publisher` | `--project-dir articles/{YYYY-MM-DD}_{标题}` |
-| 播客脚本+音频 | `article-to-solo-podcast` | `--input 公众号_文章.md` |
+| 播客脚本+音频 | `article-to-duo-podcast` | `--input 公众号_文章.md` |

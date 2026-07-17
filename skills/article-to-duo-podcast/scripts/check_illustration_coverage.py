@@ -10,6 +10,10 @@ labels，body-writer 写正文时也应呼应这些标签。
 机械检查每个有 illustration_meta.labels 的 body segment，其 labels 是否在对应的 Section
 文本中出现。这是对 LLM「零杜撰」「图标签覆盖」约束的事后校验——不靠 LLM 自觉，靠代码兜底。
 
+**双人播客（article-to-duo-podcast）兼容**：校验是子串匹配（`label in section_text`），
+双人脚本的 `A：`/`B：` 角色标注在 section 文本里不影响子串匹配（label 仍是台词内容的子串，
+如 `A：写作变现这条路径` 里 `写作变现` 仍命中）。故本脚本对双人对话稿直接生效，无需改。
+
 Usage:
   # 校验蓝图（conductor 之后）
   python check_illustration_coverage.py \

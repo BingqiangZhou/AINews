@@ -112,7 +112,7 @@ def align_captions(whisper_json: Path, tts_script_path: Path,
     print(f"  [align] words: {len(words)} 个")
 
     # 3. 主路径：用播客脚本（带标点）对齐。
-    # 优先读 script_clean.txt（solo_tts 剥离 [SECTION] 标记后的纯文本，与 TTS 音频
+    # 优先读 script_clean.txt（duo_tts 剥离 [SECTION] 标记后的纯文本，与 TTS 音频
     # 完全一致）；无则回退到原始脚本（可能含 [SECTION] 标记，需手工容忍）。
     clean_script_path = tts_script_path.parent / "temp" / "script_clean.txt"
     if clean_script_path.exists():
@@ -283,7 +283,7 @@ def build_sections_timeline(
 ) -> dict | None:
     """读 sections.json + clean script + Whisper words → sections_timeline.json。
 
-    sections.json 由 solo_tts 在 TTS 前剥离 [SECTION:N] 标记时生成。
+    sections.json 由 duo_tts 在 TTS 前剥离 [SECTION:N] 标记时生成。
     无 sections.json 或 sections 为空 → 返回 None（向后兼容，plan_scenes 回退文本匹配）。
     """
     if not sections_json_path.exists() or not clean_script_path.exists():
@@ -356,12 +356,12 @@ def main():
     # 校验输入
     if not audio_path.exists():
         print(f"ERROR: 播客音频不存在: {audio_path}", file=sys.stderr)
-        print("（已查找 _podcast/ 与文章根目录）请先运行 article-to-solo-podcast 生成播客音频。",
+        print("（已查找 _podcast/ 与文章根目录）请先运行 article-to-duo-podcast 生成播客音频。",
               file=sys.stderr)
         sys.exit(1)
     if not script_path.exists():
         print(f"ERROR: 播客脚本不存在: {script_path}", file=sys.stderr)
-        print("（已查找 _podcast/ 与文章根目录）请先运行 article-to-solo-podcast 生成播客脚本。",
+        print("（已查找 _podcast/ 与文章根目录）请先运行 article-to-duo-podcast 生成播客脚本。",
               file=sys.stderr)
         sys.exit(1)
 
@@ -370,7 +370,7 @@ def main():
     align_captions(whisper_out, script_path, audio_path, timeline_out)
 
     # Section 时间轴映射（若播客脚本带 [SECTION:N] 分节标记）
-    # sections.json + script_clean.txt 由 solo_tts 在 TTS 前剥离标记时生成，
+    # sections.json + script_clean.txt 由 duo_tts 在 TTS 前剥离标记时生成，
     # 落在 _podcast/。无则跳过（plan_scenes 回退文本匹配）。
     podcast_dir = audio_path.parent  # _podcast/ 或根目录
     sections_timeline_out = temp_dir / "sections_timeline.json"

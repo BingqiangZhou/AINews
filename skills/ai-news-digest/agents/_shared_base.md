@@ -1,7 +1,7 @@
 # 跨 skill 子 agent 共享底座
 
 > 本文件是所有带子 agent 的 skill（`ai-news-digest` /
-> `article-studio` / `article-to-solo-podcast`）的**公共契约底座**，集中维护
+> `article-studio` / `article-to-duo-podcast`）的**公共契约底座**，集中维护
 > 容易跨 skill 漂移的通用规则。各 skill 的 `agents/_shared.md` 继承本文件，
 > 只补充本 skill 专属内容（路径常量、人设、专属错误码、专属反虚构信源）。
 >
@@ -44,7 +44,7 @@
 
 - `ai-news-digest`：当日 RSS 采集条目（`temp/digest_ranked.json`），URL 原样保留。
 - `article-studio`：`_research/事实素材与来源.md`（stance_research 检索产物 / transcript 模式转录原文）。
-- `article-to-solo-podcast`：源文章（上游 article-studio 产物）。
+- `article-to-duo-podcast`：源文章（上游 article-studio 产物）。
 
 通用底线：**禁止引入权威信源以外的 LLM 内置知识**；信源模糊处保持模糊；数字/型号/引文宁可照搬原文，不为顺口改写失真。
 
@@ -53,7 +53,7 @@
 **跨 skill 单一权威源**：`article-studio/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段。
 
 - `article-studio` 的 `validate_content_quality.py` 运行时解析该文件做机器预检。
-- `article-to-solo-podcast` 的 `validate_solo_script.py` 运行时解析**同一文件**（不再读 config 的并行列表；`config.content.machine_word_blocklist_extra` 仅用于追加补充词）。
+- `article-to-duo-podcast` 的 `validate_duo_script.py` 运行时解析**同一文件**（不再读 config 的并行列表；`config.content.machine_word_blocklist_extra` 仅用于追加补充词）。
 - 各 `_shared.md` / 写作工艺文档**不再内联禁用词列表**，以免与权威源漂移。扩充禁用词只改 brand-config.md 一处。
 
 ## 集号管理（episode 单一来源）

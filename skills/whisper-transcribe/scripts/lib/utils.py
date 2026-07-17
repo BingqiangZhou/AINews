@@ -329,12 +329,12 @@ def normalize_for_match(text: str) -> str:
 def resolve_podcast_path(article_dir: Path | str, filename: str) -> Path:
     """Resolve a podcast artifact (播客_TTS.mp3 / 播客_脚本.txt) under an article dir.
 
-    article-to-solo-podcast writes its outputs to `<文章目录>/_podcast/` (its
+    article-to-duo-podcast writes its outputs to `<文章目录>/_podcast/` (its
     SKILL.md rule 6), while article-to-video historically expected them at the
     article root. This resolver bridges both layouts.
 
     Lookup priority:
-      1. `_podcast/<filename>` (canonical, current article-to-solo-podcast output)
+      1. `_podcast/<filename>` (canonical, current article-to-duo-podcast output)
       2. `<filename>` at the article root (backward compatibility)
       3. If neither exists, return the `_podcast/<filename>` path so that the
          caller's "file not found" error points at the canonical location.

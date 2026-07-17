@@ -1,5 +1,5 @@
 """
-validate_factcheck_report.py — 校验 solo-factchecker 风险报告的 schema 与逻辑一致性。
+validate_factcheck_report.py — 校验 duo-factchecker 风险报告的 schema 与逻辑一致性。
 
 检查：
   - 顶层必要字段齐全（round, network_ok, hard_block, summary, claims, fix_directives）

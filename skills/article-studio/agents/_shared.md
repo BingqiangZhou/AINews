@@ -73,7 +73,7 @@ writer 在 DRAFT/FIX 时按当前类型子集自查，content-editor（内容主
 
 ## 禁用 AI 腔短语（blocklist）
 
-**单一权威源**：`article-studio/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段（跨 skill 共享，article-to-solo-podcast 的 `validate_solo_script.py` 也解析同一文件）。`validate_content_quality.py` 运行时从该文件解析（**非硬编码**）。生成前必读该文件；不在本文件罗列禁用词，以免与权威源漂移。
+**单一权威源**：`article-studio/references/brand-config.md` 的 `## 禁用 AI 腔短语` 段（跨 skill 共享，article-to-duo-podcast 的 `validate_duo_script.py` 也解析同一文件）。`validate_content_quality.py` 运行时从该文件解析（**非硬编码**）。生成前必读该文件；不在本文件罗列禁用词，以免与权威源漂移。
 
 ## Prompt 先落盘
 

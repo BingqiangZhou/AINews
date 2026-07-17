@@ -1,0 +1,70 @@
+{
+  "schema_version": "article-to-duo-podcast-v1",
+  "brand": {
+    "name": "AINews",
+    "hosts": {
+      "a": {"name": "苏打", "identity": "主播A", "role_hint": "主推进、抛结论、收束"},
+      "b": {"name": "冰糖", "identity": "主播B", "role_hint": "主追问、补数据、抛梗"}
+    },
+    "_note_hosts": "双主持平等互动，name 同时映射到 tts.voices（音色名）。role_hint 仅给 writer 的戏份倾向提示，不是机械分工——两主持都既推进又补充。"
+  },
+  "tts": {
+    "provider": "mimo",
+    "model": "mimo-v2.5-tts",
+    "clone": false,
+    "voices": {
+      "a": "苏打",
+      "b": "冰糖"
+    },
+    "turn_gap_ms": 250,
+    "format": "mp3",
+    "bitrate": "320k",
+    "_note": "双人播客用 MiMo 内置音色（非 clone）：主播A=苏打(男)、主播B=冰糖(女)。双音色无法一次合成，duo_tts.py 按角色标注切段逐 turn 合成 + ffmpeg 拼接（turn 间插 turn_gap_ms 静音）+ 全局一次 loudnorm。voiceclone/voice_ref.wav 路径已退役（单人播客遗留）。内置音色清单见 references/tts-chunking.md。"
+  },
+  "content": {
+    "min_chars": 2000,
+    "max_chars": 3200,
+    "max_para_chars": 80,
+    "target_minutes": "10-14",
+    "min_turns": 15,
+    "max_consecutive_same_role": 3,
+    "role_balance": {"min_share": 0.35, "max_share": 0.65},
+    "machine_word_blocklist_extra": [],
+    "_note_machine_words": "AI-腔禁用词单一权威源 = article-studio/references/brand-config.md 的 '## 禁用 AI 腔短语'（validate_duo_script.py 运行时解析，与 validate_content_quality.py 同源）。本字段 machine_word_blocklist_extra 仅用于追加该列表之外的补充词，默认为空。"
+  },
+  "evaluation": {
+    "max_fix_rounds": 3,
+    "market_ready_bar": {
+      "min_per_dimension": 4,
+      "min_overall": 4.0,
+      "fidelity_must_be_clean": true
+    },
+    "factcheck": {
+      "enabled": true,
+      "hard_fact_patterns": [
+        "\\d+\\.\\d+(\\.\\d+)?",
+        "v\\d+\\.\\d+",
+        "20\\d{2}[-/年.]?\\d{1,2}",
+        "第?\\d+版"
+      ],
+      "soft_fail_on_network": true
+    }
+  },
+  "publishing": {
+    "boker_episode_config": "../ai-news-digest/config.json",
+    "bump_episode_script": "../ai-news-digest/scripts/bump_episode.py",
+    "auto_publish": false
+  },
+  "studio": {
+    "enabled": true,
+    "host_listen_max_rounds": 3,
+    "total_call_cap": 20,
+    "fast_fallback": false,
+    "_note": "Phase 2 编剧室开关；fast_fallback=true 或 enabled=false 时退回单 duo-scriptwriter（双人简化生成路径，仍是对话稿，不是独白）"
+  },
+  "environment": {
+    "conda_python": "python",
+    "ffmpeg": "ffmpeg",
+    "mimo_api_key_env": "MIMO_API_KEY"
+  }
+}
