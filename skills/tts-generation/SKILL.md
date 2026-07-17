@@ -12,7 +12,7 @@ TTS 生成**后端执行器**。把文本丢给 MiMo-V2.5-TTS 合成音频文件
 
 ### 1. 作为库被导入（主用法）
 
-下游 skill 直接导入 `synthesize()` 做单段合成。典型消费者：`article-to-duo-podcast/scripts/duo_tts.py`——双人播客按角色标注（`A：`/`B：`）切段，每 turn 用对应内置音色（A=苏打、B=冰糖，`clone=False`）逐段合成，再用 ffmpeg 拼接（turn 间插静音）+ 全局 loudnorm。双音色无法一次合成，分段 + 拼接是双人播客的唯一可行路径。
+下游 skill 直接导入 `synthesize()` 做单段合成。典型消费者：`article-to-solo-podcast/scripts/solo_tts.py`——单人专业资讯播客整段文本一次性合成（单音色冰糖，`clone=False`），调用 `extract_sections` 仅剥离 `[SECTION:N]` 标记（不切段、不拼接），输出 -16 LUFS 单段音频。
 
 ```python
 # 定位 tts-generation/scripts

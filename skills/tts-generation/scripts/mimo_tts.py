@@ -42,7 +42,7 @@ DEFAULT_VOICE = "苏打"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # voice_ref.wav 的单一权威源就在本 skill scripts/ 下（TTS 克隆参考音频）。
-# 其它 skill（article-to-duo-podcast）通过相对路径引用本文件。
+# 其它 skill（article-to-solo-podcast）通过相对路径引用本文件。
 DEFAULT_REF_AUDIO = os.path.join(SCRIPT_DIR, "voice_ref.wav")
 
 

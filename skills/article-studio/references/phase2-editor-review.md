@@ -248,5 +248,5 @@ else:
    - 配图 → `article-illustrator`
    - 封面 → `article-cover-image-generator`
    - 公众号草稿 → `browser-publisher`（先按其 wechat-mp.md 检查 `>` 引用块等规范）
-   - 播客 → `article-to-duo-podcast`
+   - 播客 → `article-to-solo-podcast`
 4. `state.json.phase = "editor_passed"`

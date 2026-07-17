@@ -3,7 +3,7 @@
 test_resolve_podcast.py — resolve_podcast_path 的单元测试
 
 覆盖 article-to-video 对播客产物路径的解析：
-  - _podcast/ 子目录存在（canonical，article-to-duo-podcast 输出位）
+  - _podcast/ 子目录存在（canonical，article-to-solo-podcast 输出位）
   - 仅根目录存在（向后兼容）
   - 两者都缺（返回 _podcast/ canonical 路径用于报错）
   - 两者都在（优先 _podcast/）

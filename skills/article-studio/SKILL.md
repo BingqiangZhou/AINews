@@ -8,7 +8,7 @@ description: >
   输出通过审查的公众号_文章.md。**触发场景**：用户说"写一篇公众号文章"、给主题+立场/素材要写公众号、
   或需要"有主编把关"的文章时使用。本 skill 按类型路由写带声音的公众号文（止步审查通过）。
   **不编排**配图/封面/发布/播客（由用户后续手动调 article-illustrator / article-cover-image-generator /
-  browser-publisher / article-to-duo-podcast）。
+  browser-publisher / article-to-solo-podcast）。
   **transcript 模式**：被编排器（如 ai-news-digest）调用时，输入可是一段录音转录文本（`source_mode: transcript`），
   此时跳过联网检索、转录为唯一权威源、零外部事实，把口语转录改写为书面公众号文。
 metadata:
@@ -59,7 +59,7 @@ metadata:
 **本 skill 不编排**：配图/封面/草稿上传/播客/喜马拉雅。审查通过后，用户手动调对应 skill：
 - 配图/封面 → `article-illustrator` / `article-cover-image-generator`
 - 公众号草稿上传 → `browser-publisher`
-- 播客 → `article-to-duo-podcast`
+- 播客 → `article-to-solo-podcast`
 
 ## 工作流（4 phase 状态机）
 
@@ -166,7 +166,7 @@ articles/{YYYY-MM-DD}_{标题}/
 
 ## 关联 Skills
 
-- **article-to-duo-podcast**：本 skill 的"评分+修正循环"机制参照它的 Phase 3（market_ready + hard_block + scorecard）。
+- **article-to-solo-podcast**：本 skill 的"评分+修正循环"机制参照它的 Phase 3（market_ready + hard_block + scorecard）。
 - **ai-news-digest**：编排器，只读复用本 skill 的 `validate_content_quality.py` / `brand-config.md`，并通过 `backup_file.py`（迁入 ai-news-digest）覆盖前备份；编排器在 transcript 模式下委派本 skill 产出文章。
 - **browser-publisher**：审查通过后，用户手动调它上传公众号草稿。
 

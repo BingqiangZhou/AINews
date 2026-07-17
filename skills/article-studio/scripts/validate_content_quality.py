@@ -257,7 +257,7 @@ def _validate_gongzhonghao(
 
 
 def _validate_boker(output_dir: Path) -> list[Failure]:
-    # 播客产物 canonical 在 _podcast/（article-to-duo-podcast 输出位），根目录作兼容回退
+    # 播客产物 canonical 在 _podcast/（article-to-solo-podcast 输出位），根目录作兼容回退
     script_path = output_dir / "_podcast" / "播客_脚本.txt"
     if not script_path.exists():
         script_path = output_dir / "播客_脚本.txt"
