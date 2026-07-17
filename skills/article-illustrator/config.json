@@ -3,7 +3,7 @@
     "conda_python": "python"
   },
   "illustration": {
-    "image_backend": "gaoding",
+    "image_backend": "agnes",
     "fallback_to_agnes": false
   }
 }

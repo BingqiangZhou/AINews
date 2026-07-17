@@ -4,7 +4,7 @@
     "chrome_download_dir": ""
   },
   "cover": {
-    "provider": "gaoding",
+    "provider": "agnes",
     "model": "agnes-image-2.1-flash",
     "gaoding_model": "万相2.7",
     "jimeng_model": "图片 4.7",
