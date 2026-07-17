@@ -160,7 +160,7 @@ _video/
 | 脚本 | 用途 |
 |------|------|
 | `scripts/align_captions.py` | 阶段 1：Whisper 转录 + caption_align 对齐 → `timeline_captions.json`（新旧流程共用） |
-| `scripts/align_script.py` | 阶段 2：播客脚本原文句子 → `align_sentences_to_words` 对齐 Whisper word 时间戳 → `captions_corrected.json`（**新流程**） |
+| `scripts/align_script.py` | 阶段 2：播客脚本原文句子 → `align_sentences_to_words` 对齐 Whisper word 时间戳 → `captions_corrected.json`（**新流程**）。**section 时间戳**用每个 section 首句在 captions 里查实际口播时间（权威），不依赖 Phase 1 的 `sections_timeline.json`（后者 char 偏移在 DEEPDIVE/ENDING 等节会严重错位导致音画不同步）。 |
 | `scripts/design_scenes.py` | 阶段 2.5：生成视觉设计 prompt；主 agent 读 prompt 按 schema 输出 `scenes_visual.json`（**新流程**） |
 | `scripts/build_composition.py` | 阶段 3：读 scenes_visual + captions_corrected + 音频 → 生成 hyperframes HTML 项目（视觉纯 CSS/GSAP，**新流程**） |
 | `scripts/render_video.py` | 阶段 4：封装 `npx hyperframes lint/check/render`（含磁盘 cache 重定向） → `公众号_视频.mp4`（**新流程**） |

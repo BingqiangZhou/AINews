@@ -33,7 +33,7 @@ SCRIPTS_DIR = Path(__file__).resolve().parent
 sys.path.insert(0, str(SCRIPTS_DIR))
 
 from lib.utils import setup_windows_encoding, read_json, write_json, resolve_podcast_path  # noqa: E402
-from lib.caption_align import align_sentences_to_words, verify_coverage  # noqa: E402
+from lib.caption_align import align_sentences_to_words, verify_coverage, normalize  # noqa: E402
 
 # [SECTION:xxx] 标记，xxx 可以是 OPENING / 数字 / DEEPDIVE / ENDING
 SECTION_RE = re.compile(r"^\[SECTION:([^\]]+)\]\s*$", re.MULTILINE)
@@ -155,30 +155,72 @@ def main():
     # 5. 解析脚本 section 结构（供 Phase 3 用）
     sections = parse_sections(script_text)
 
-    # 6. 读取 Phase 1 的 sections_timeline.json（section 时间戳），
-    #    给每个 section 补充 start_ms/end_ms（用于 plan_scenes 切场景）
-    sections_timeline_path = temp_dir / "sections_timeline.json"
-    sec_timeline = {}
-    if sections_timeline_path.exists():
-        stl = read_json(sections_timeline_path)
-        for s in stl.get("sections", []):
-            sec_timeline[str(s.get("section_index"))] = {
-                "start_ms": s.get("start_ms"),
-                "end_ms": s.get("end_ms"),
-            }
+    # 6. 为每个 section 配准时间戳：用 section 首句在 captions_corrected 里查实际口播时间。
+    #    【关键】不依赖 Phase 1 的 sections_timeline.json——它的 section char_start 偏移
+    #    在 DEEPDIVE/ENDING 等节严重错位（solo_tts 生成 sections.json 时 section 边界
+    #    算错，把标记前内容算进了下一节），导致 DEEPDIVE 时间戳早了 150+ 秒（音画不同步）。
+    #    captions_corrected 的每句都有经字符级 DP 对齐的精准时间戳，用首句查找更可靠。
+    audio_dur_ms = int((read_json(temp_dir / "timeline_captions.json").get(
+        "audio_duration_seconds") or 0) * 1000) if (temp_dir / "timeline_captions.json").exists() else 0
 
+    sec_starts: list[tuple[int, str]] = []  # (caption_index, section_list_index)
+    for si, sec in enumerate(sections):
+        first_line = sec["lines"][0] if sec.get("lines") else ""
+        # 用首句前若干字符做归一化锚点匹配
+        anchor = normalize(first_line)[:18]
+        cap_idx = None
+        if anchor:
+            for ci, c in enumerate(captions):
+                if anchor in normalize(c.get("text", "")):
+                    cap_idx = ci
+                    break
+        # 回退：首句未匹配（如 section 标题是「一、大模型...」口播可能略不同），
+        # 用首句更短前缀
+        if cap_idx is None and len(first_line) > 4:
+            short_anchor = normalize(first_line)[:8]
+            for ci, c in enumerate(captions):
+                if short_anchor in normalize(c.get("text", "")):
+                    cap_idx = ci
+                    break
+        sec_starts.append((cap_idx, si))
+
+    # 每个 section 的 start_ms = 其首句 caption 的 startMs；
+    # end_ms = 下一个 section 的 start_ms（首尾相接）；最后一个 end = 音频结束。
+    # 首句未匹配的 section：start = 前一节 end（兜底）。
     sections_with_time = []
-    for sec in sections:
+    prev_end_ms = 0
+    for si, sec in enumerate(sections):
         idx = sec["index"]
-        t = sec_timeline.get(idx, {})
+        cap_idx = sec_starts[si][0]
+        if cap_idx is not None:
+            start_ms = int(captions[cap_idx].get("startMs", prev_end_ms))
+        else:
+            start_ms = prev_end_ms
+            print(f"  [align_script] WARNING: section [{idx}] 首句未匹配到字幕，"
+                  f"用前节 end {start_ms}ms 兜底", file=sys.stderr)
+        # 不倒退（若首句时间早于上节，钳到上节 end）
+        if start_ms < prev_end_ms:
+            start_ms = prev_end_ms
+        # end_ms = 下一节 start（若有），否则音频结束
+        if si + 1 < len(sections):
+            next_cap_idx = sec_starts[si + 1][0]
+            if next_cap_idx is not None:
+                end_ms = int(captions[next_cap_idx].get("startMs", start_ms))
+            else:
+                end_ms = audio_dur_ms
+        else:
+            end_ms = audio_dur_ms
+        if end_ms <= start_ms:
+            end_ms = start_ms + 1000
         sections_with_time.append({
             "index": idx,
             "title": sec["lines"][0] if sec["lines"] else idx,
             "raw": sec["raw"],
             "lines": sec["lines"],
-            "start_ms": t.get("start_ms"),
-            "end_ms": t.get("end_ms"),
+            "start_ms": start_ms,
+            "end_ms": end_ms,
         })
+        prev_end_ms = end_ms
 
     output = {
         "audio_duration_seconds": read_json(
