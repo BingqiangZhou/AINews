@@ -25,18 +25,19 @@
   },
   "subtitles": {
     "font": "Microsoft YaHei",
-    "fontsize": 42,
+    "fontsize": 38,
     "primary_color": "&H00FFFFFF",
     "outline_color": "&H00000000",
     "outline_width": 2,
     "shadow": 1,
     "margin_v": 40,
-    "max_chars_per_line": 26,
-    "margin_l": 320,
-    "margin_r": 320,
+    "single_line": true,
+    "max_chars_per_line": 50,
+    "margin_l": 60,
+    "margin_r": 60,
     "border_style": 3,
     "back_color": "&H80000000",
-    "_note": "primary_color 是 ASS BGR+alpha 格式；margin_v 是字幕距底部边距（像素，减小=字幕更靠下）；margin_l/margin_r 是左右边距（限制字幕在中间 2/3 宽度）；max_chars_per_line 超过才在标点处断行；border_style 1=描边 3=背景框；back_color 是背景框颜色（BorderStyle=3 时生效），&H80000000=半透明黑"
+    "_note": "primary_color 是 ASS BGR+alpha 格式；margin_v 是字幕距底部边距（像素，减小=字幕更靠下）；margin_l/margin_r 是左右边距（像素，限制字幕宽度，60/60 接近全宽留小边距）；single_line=true 时强制单行不折行（不插 \\N，长句靠小字号+宽边距容纳，字幕更整洁）；single_line=false 时按 max_chars_per_line 在标点处断行（\\N 折成两行）；max_chars_per_line 在 single_line=false 时是折行阈值、true 时是单行最大字数校验上限（超限仅警告不阻断）；border_style 1=描边 3=背景框；back_color 是背景框颜色（BorderStyle=3 时生效），&H80000000=半透明黑"
   },
   "whisper": {
     "model": "large-v3-turbo",

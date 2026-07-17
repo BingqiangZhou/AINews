@@ -90,6 +90,9 @@ def build_ass(captions: list[dict], config: dict) -> str:
     shadow = sub_cfg.get("shadow", 0)
     margin_v = sub_cfg["margin_v"]
     max_chars = sub_cfg["max_chars_per_line"]
+    # single_line=true：强制单行不折行（不插 \N）。长句靠小字号 + 宽边距容纳，
+    # 字幕更整洁。false（旧行为）：超 max_chars 时在标点处折成两行。
+    single_line = sub_cfg.get("single_line", False)
     # BorderStyle: 1=描边+阴影（旧默认，浅色图上不清），3=不透明背景框（推荐）。
     # BackColour: 背景框颜色（BorderStyle=3 时生效），ASS BGR+alpha，&H80000000=半透明黑。
     border_style = sub_cfg.get("border_style", 3)
@@ -142,7 +145,15 @@ def build_ass(captions: list[dict], config: dict) -> str:
         end_str = ms_to_ass_time(end_ms)
 
         # 断行 + 转义
-        text = break_long_line(text, max_chars)
+        # single_line=true 时不折行（单行），仅对超长字幕发警告（不阻断）；
+        # false 时按旧行为在标点处折成两行。
+        if single_line:
+            if len(text) > max_chars:
+                print(f"  [ass] WARN: 字幕 {len(text)} 字超单行上限 {max_chars}，"
+                      f"single_line 下不折行，依赖字号/边距容纳：{text[:30]}...",
+                      file=sys.stderr)
+        else:
+            text = break_long_line(text, max_chars)
         text = escape_ass_text(text)
 
         lines.append(f"Dialogue: 0,{start_str},{end_str},Default,,0,0,0,{text}")
@@ -200,7 +211,9 @@ def main():
 
     # 统计
     dialogue_count = ass_content.count("Dialogue:")
-    print(f"  [ass] {dialogue_count} 条字幕 → {output_path.name}")
+    multi_line_count = ass_content.count("\\N")
+    mode = "single_line" if config['subtitles'].get('single_line') else "wrap"
+    print(f"  [ass] {dialogue_count} 条字幕 → {output_path.name}（{mode}，多行/折行 {multi_line_count} 条）")
     print(f"  [ass] 字体: {config['subtitles']['font']} {config['subtitles']['fontsize']}pt")
 
 
