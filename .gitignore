@@ -31,3 +31,7 @@ __pycache__/
 .idea/
 .DS_Store
 Thumbs.db
+
+# ===== hyperframes 渲染临时产物（article-to-video）=====
+.hf-tmp/
+.hf-cache/

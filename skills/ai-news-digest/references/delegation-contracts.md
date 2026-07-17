@@ -165,36 +165,44 @@ article-to-solo-podcast 自动读：
 
 ---
 
-## Phase 7d — 视频：委派 `article-to-video`（顺序 CLI）
+## Phase 7d — 视频：委派 `article-to-video`（hyperframes 渲染 · 文案驱动视觉）
 
-> **由 `config.media.video_enabled` 控制，日报默认关闭**。视频 5 阶段 ffmpeg + Whisper 重转录，对清单价值最低，且依赖插图做画面（插图也默认关）。用户可在启动前通过 `config.media.video_enabled` 或对话显式开启（需同时开插图）。
+> **由 `config.media.video_enabled` 控制，日报默认关闭**。视频用 hyperframes（HTML 渲染）生成**文案驱动的数据可视化画面**（大数字/关键词/要点/数据网格，纯 CSS/GSAP 生成，**不复用文章插图**）。用户可在启动前通过 `config.media.video_enabled` 或对话显式开启。视频不再强依赖插图（Phase 7b 可关），只需播客音频+脚本。
 
-**职责**：文章+插图+封面+播客音频 → 16:9 视频（Ken Burns + 烧录字幕）。无 agents、无交互，纯 5 阶段 CLI。
+**职责**：播客音频+脚本 → 16:9 动态视频（hyperframes HTML composition：每个 section 根据**播客文案内容**生成原生视觉——大数字 count-up / 数据卡片网格 / 要点列表 / 关键词 chips + 动态渐变背景 + 逐句字幕 + 品牌水印）。字幕文本来自播客脚本原文（正确无错字），时间戳来自 Whisper（精准对齐）。
 
 ### 前置条件（必须全部就绪）
-- `公众号_文章.md`（含 `![](imgs/NN-xxx.png)` 插图引用） ← Phase 7b-render 回写后
-- `imgs/*.png` ← Phase 7b-render
-- `公众号_封面.png` ← Phase 7a
+- `公众号_文章.md` ← Phase 6（读标题用）
 - `_podcast/播客_TTS.mp3` ← Phase 7c（用作旁白音频，不重新 TTS）
-- `_podcast/播客_脚本.txt` ← Phase 7c（字幕对齐用）
+- `_podcast/播客_脚本.txt` ← Phase 7c（字幕原文 + 视觉设计素材来源，带 `[SECTION:N]` 标记）
+- （可选）`imgs/segments.json` ← Phase 7b（若存在，design_scenes 可参考其关键词；视频视觉不复用插图 PNG）
 
 ### 调用（顺序，各带 `--article-dir`，阶段间读 `_video/state.json` 续跑）
 
-5 阶段脚本的**权威调用序列**见 `article-to-video/SKILL.md` 的"### 脚本调用示例"（被委派 skill 固化自己的调用契约，不在本文件重复 bash 块以免漂移）。编排器视角的要点：
+5 阶段脚本的**权威调用序列**见 `article-to-video/SKILL.md` 的"### 脚本调用示例"。编排器视角的要点：
 
-- `<a2v_scripts>` = `skills/article-to-video/scripts`（见本文件顶部路径常量）。
-- 5 脚本顺序固定：`align_captions.py`（带 `--force`）→ `plan_scenes.py` → `render_kenburns.py` → `captions_to_ass.py` → `compose_video.py`，各带 `--article-dir "<article_dir>"`。
-- 每个 `<py>` 由本编排器按 `AINews_PYTHON` → `config.environment.conda_python` → `python` 解析。
+- `<a2v_scripts>` = `skills/article-to-video/scripts`。
+- 5 阶段顺序（hyperframes 新流程，`config.renderer: "hyperframes"` 默认）：
+  1. `align_captions.py`（带 `--force`）— Whisper word-level 转录 → `timeline_captions.json` + `whisper_segments.json` + `sections_timeline.json`
+  2. `align_script.py` — 播客脚本原文句子对齐 Whisper word 时间戳 → `captions_corrected.json`
+  3. `design_scenes.py` — 生成视觉设计 prompt → **编排器主 agent 读 prompt，按 schema 为每个 section 提取关键数字/关键词/要点** → `scenes_visual.json`（这一步是 LLM 工作，非纯脚本）
+  4. `build_composition.py` — 读 scenes_visual + captions_corrected + 音频 → `hyperframes_project/index.html`（视觉纯 CSS/GSAP）
+  5. `render_video.py`（带 `--quality standard`）— `npx hyperframes lint` → `check` → `render` → `公众号_视频.mp4`
+- **Phase 3（design_scenes）是 LLM 步骤**：脚本只生成 prompt，主 agent 填充 JSON（与 Phase 3 RSS 打分模式一致）。反虚构约束：视觉元素只能从该 section 播客原文提取，不编造。
+- `render_video.py` 内部调 `npx hyperframes`，需 Node.js ≥22 + FFmpeg。渲染缓存重定向到文章同盘 `.hf-cache`（避免系统盘 Temp 耗尽）。11 分钟视频 standard 约 13-15 分钟。
+
+> **回退**：`config.renderer: "ffmpeg"` 走旧 5 阶段 Ken Burns 流程（复用文章插图），保留为应急。
 
 ### 输出
 
 | 文件 | 路径 |
 |------|------|
-| 视频 | `<article_dir>/_video/公众号_视频.mp4`（1920×1080, 30fps, H.264） |
+| 视频 | `<article_dir>/_video/公众号_视频.mp4`（1920×1080, 30fps, H.264 + AAC） |
+| hyperframes 项目 | `<article_dir>/_video/hyperframes_project/index.html` + `assets/`（可用 `npx hyperframes preview` 在 Studio 里手动编辑） |
 | state | `<article_dir>/_video/state.json`（其内部续跑账本） |
 
 ### 断点续跑
-article-to-video 的每个脚本读 `_video/state.json` 的 phase1-5 key，已完成则跳过。编排器在 `stages.video.status` 追踪整体是否完成。
+article-to-video 的每个脚本读 `_video/state.json` 的 phase1-4 key，已完成则跳过。编排器在 `stages.video.status` 追踪整体是否完成。
 
 ---
 

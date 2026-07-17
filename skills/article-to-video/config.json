@@ -1,5 +1,8 @@
 {
-  "schema_version": "article-to-video-v1",
+  "schema_version": "article-to-video-v2",
+  "_note_schema": "v2: 视频生成改为 hyperframes（HTML 渲染）。旧的 Ken Burns 5 阶段 ffmpeg 路径（align_captions→plan_scenes→render_kenburns→captions_to_ass→compose_video）保留为回退，默认走 hyperframes 新流程（align_captions→align_script→build_composition→render_video）。",
+  "renderer": "hyperframes",
+  "_note_renderer": "renderer=hyperframes 走新流程；renderer=ffmpeg 走旧 Ken Burns 流程（回退用）。新流程脚本：align_script.py / build_composition.py / render_video.py。",
   "video": {
     "width": 1920,
     "height": 1080,
@@ -8,22 +11,39 @@
     "pix_fmt": "yuv420p",
     "crf": 18,
     "preset": "medium",
-    "audio_bitrate": "192k"
+    "audio_bitrate": "192k",
+    "_note": "width/height/fps 是输出规格。hyperframes 流程里 width/height 由 composition 的 data-width/data-height 决定（build_composition 固定 1920x1080），fps 由 render CLI 的 --fps 决定（默认 30）。codec/crf/preset/audio_bitrate 仅旧 ffmpeg 流程用。"
+  },
+  "hyperframes": {
+    "project_name": "ainews-daily",
+    "composition_id": "ainews-daily",
+    "title_card_sec": 3.5,
+    "render_quality": "standard",
+    "_note_render_quality": "draft 快速预览 / standard 标准发布 / high 精品。本地 Chrome headless 渲染，11 分钟视频 standard 约 20-40 分钟。",
+    "ken_burns_zoom": 1.12,
+    "ken_burns_pan_px": 40,
+    "_note_ken_burns": "背景插图缓慢放大 + 平移幅度（像素）。build_composition 里 PAN_CYCLE 轮换方向避免连续同向。",
+    "caption_fontsize": 46,
+    "caption_maxwidth": 1600,
+    "brand_name": "AINews",
+    "_note_caption": "字幕样式参数（字号/最大宽度/品牌名）。build_composition 读这些生成 CSS。"
   },
   "cover": {
     "duration_sec": 4,
     "enabled": false,
-    "ken_burns": "static"
+    "ken_burns": "static",
+    "_note": "仅旧 ffmpeg 流程用（封面片头）。hyperframes 流程无独立封面片头，开场 section 即承担封面职能。"
   },
   "ken_burns": {
+    "_deprecated": "仅旧 ffmpeg 流程（render_kenburns.py）读取。hyperframes 流程用 hyperframes.ken_burns_zoom/ken_burns_pan_px。",
     "min_zoom": 1.0,
     "max_zoom": 1.15,
     "pan_range": 0.08,
     "min_scene_sec": 6,
-    "max_scene_sec": 60,
-    "_note": "min/max_scene_sec 用于过长或过短场景的钳制；pan_range 是平移幅度占画面的比例"
+    "max_scene_sec": 60
   },
   "subtitles": {
+    "_deprecated": "仅旧 ffmpeg 流程（captions_to_ass.py）读取。hyperframes 流程字幕由 build_composition 内联 HTML/CSS 渲染，用 hyperframes.caption_* 参数。",
     "font": "Microsoft YaHei",
     "fontsize": 38,
     "primary_color": "&H00FFFFFF",
@@ -36,14 +56,13 @@
     "margin_l": 60,
     "margin_r": 60,
     "border_style": 3,
-    "back_color": "&H80000000",
-    "_note": "primary_color 是 ASS BGR+alpha 格式；margin_v 是字幕距底部边距（像素，减小=字幕更靠下）；margin_l/margin_r 是左右边距（像素，限制字幕宽度，60/60 接近全宽留小边距）；single_line=true 时强制单行不折行（不插 \\N，长句靠小字号+宽边距容纳，字幕更整洁）；single_line=false 时按 max_chars_per_line 在标点处断行（\\N 折成两行）；max_chars_per_line 在 single_line=false 时是折行阈值、true 时是单行最大字数校验上限（超限仅警告不阻断）；border_style 1=描边 3=背景框；back_color 是背景框颜色（BorderStyle=3 时生效），&H80000000=半透明黑"
+    "back_color": "&H80000000"
   },
   "whisper": {
     "model": "large-v3-turbo",
     "device": "cuda",
     "lang": "zh",
-    "_note": "本块是 article-to-video 调用 whisper-transcribe 时的参数，被 align_captions.py 读取。model 值与 whisper-transcribe/config.json#default_whisper_model 保持一致（单一权威源在 whisper-transcribe），修改时双向同步。"
+    "_note": "本块是 align_captions.py 调用 whisper-transcribe 时的参数（新旧流程共用 Phase 1）。model 值与 whisper-transcribe/config.json#default_whisper_model 保持一致（单一权威源在 whisper-transcribe），修改时双向同步。"
   },
   "environment": {
     "conda_python": "python",
