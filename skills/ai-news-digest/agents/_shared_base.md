@@ -1,7 +1,7 @@
 # 跨 skill 子 agent 共享底座
 
 > 本文件是所有带子 agent 的 skill（`ai-news-digest` /
-> `article-studio` / `article-to-duo-podcast`）的**公共契约底座**，集中维护
+> `article-studio` / `article-to-solo-podcast` / `article-to-duo-podcast`）的**公共契约底座**，集中维护
 > 容易跨 skill 漂移的通用规则。各 skill 的 `agents/_shared.md` 继承本文件，
 > 只补充本 skill 专属内容（路径常量、人设、专属错误码、专属反虚构信源）。
 >

@@ -120,11 +120,13 @@
 
 ---
 
-## Phase 7c — 播客：委派 `article-to-duo-podcast`
+## Phase 7c — 播客：委派 `article-to-solo-podcast`（单人专业资讯播报）
 
-**职责**：文章 → **双人对话播客**脚本（双主持 A=苏打/B=冰糖 互问互答）+ 双音色 TTS 音频（10 维 rubric 含对话化学反应/角色平衡 + 集号管理）。已原生支持文章输入，输出嵌套 `_podcast/`。
+**职责**：文章 → **单人专业资讯播客**脚本（像《晚点》《硅谷 101》资讯简报：客观陈述为主、信息密度高、关键处给一句精炼"点评："判断）+ 单音色 TTS 音频（clone 苏打）。10 维 rubric（清晰度/节奏/保真，**不奖励闲聊腔**）+ 集号管理。已原生支持文章输入，输出嵌套 `_podcast/`。
 
-> **默认走 fast_fallback 单写手（非 7-agent studio）**：资讯播报适合"双人简化生成"路径，7-agent studio（为深度打磨的对话场景设计）对日报过度。**本编排器在委派说明里明确指示下游 agent 走 fast_fallback（覆写其自身 config 的 `studio.enabled: true` 默认）**——skill 工作区的跨 skill 意图传递靠委派 prompt，不是 CLI 参数。下游 agent 据此走 duo-scriptwriter 单写手（仍产出双人对话稿，保留 factcheck+judge 防虚构），从 ~9-18 次 LLM 调用降到 ~3 次。
+> **默认走 fast_fallback 单写手（非 7-agent studio）**：资讯播报适合"单人简化生成"路径，7-agent studio（为深度打磨的录音场景设计）对日报过度。**本编排器在委派说明里明确指示下游 agent 走 fast_fallback（覆写其自身 config 的 `studio.enabled: true` 默认）**——skill 工作区的跨 skill 意图传递靠委派 prompt，不是 CLI 参数。下游 agent 据此走 solo-scriptwriter 单写手（产出单人专业资讯播报稿，保留 factcheck+judge 防虚构），从 ~9-18 次 LLM 调用降到 ~3 次。
+>
+> **风格取向**：本 skill 的 craft/rubric 已重写为"专业资讯播报"取向（`config.content.style: "professional_news"`）——客观陈述为主、第三人称正常态、关键处"点评："前缀判断（全篇 ≤2-3 处）。不写闲聊腔/夸张/人设态度。
 
 ### 前置条件
 - **若 `illustrations_enabled=true`**：需 Phase 7b-prepare 完成（`<article_dir>/imgs/segments.json` 就绪），conductor 读它按 segment 分组要点 + 据 illustration_meta 对齐图内容。
@@ -136,25 +138,25 @@
 |------|----|----|
 | `--input` | `<article_dir>/公众号_文章.md` | 文章（含插图引用无妨，ingest_article.py 会清洗） |
 
-> **委派指令（必须在委派说明里传达给下游 agent）**：`studio_mode: "fast_fallback"` —— 下游 article-to-duo-podcast agent 收到此指令后，**覆写其自身 config.json 的 `studio.enabled` 为 false**（该 config 默认 true，适合深度打磨的录音场景；资讯播报场景须覆写），走 duo-scriptwriter 单写手路径（双人简化生成），不走 7-agent studio。
+> **委派指令（必须在委派说明里传达给下游 agent）**：`studio_mode: "fast_fallback"` —— 下游 article-to-solo-podcast agent 收到此指令后，**覆写其自身 config.json 的 `studio.enabled` 为 false**（该 config 默认 true，适合深度打磨的录音场景；资讯播报场景须覆写），走 solo-scriptwriter 单写手路径（单人专业资讯播报），不走 7-agent studio。
 
-article-to-duo-podcast 自动读：
+article-to-solo-podcast 自动读：
 - `<article_dir>/imgs/segments.json`（Phase 7b-prepare 产出）
 - `ai-news-digest/config.json` 的 `platforms.boker_next_episode`（集号单一来源）
-- `tts-generation` skill（MiMo 合成；**双人用内置音色苏打+冰糖，非 clone**，无需 voice_ref.wav）
+- `tts-generation` skill（MiMo 合成；**单人用 clone 音色苏打 + voice_ref.wav**）
 
 ### 输出
 
 | 文件 | 路径 |
 |------|------|
-| 脚本 | `<article_dir>/_podcast/播客_脚本.txt`（含 `A：`/`B：` 角色标注 + `[SECTION:N]`） |
+| 脚本 | `<article_dir>/_podcast/播客_脚本.txt`（单人独白，含 `[SECTION:N]`，无角色标注） |
 | 标题描述 | `<article_dir>/_podcast/播客_标题与描述.txt` |
-| 音频 | `<article_dir>/_podcast/播客_TTS.mp3`（320k, -16 LUFS, 10-14 min，双音色交替） |
+| 音频 | `<article_dir>/_podcast/播客_TTS.mp3`（320k, -16 LUFS, 6-10 min，单音色 clone 苏打） |
 | state | `<article_dir>/_podcast/state.json`（其内部续跑账本） |
 
 ### 并行与集号
 与 Phase 7b-render（生图）**并行**委派（播客不依赖 PNG，只读文章和 segments.json）。
-**集号 claiming**：article-to-duo-podcast 会读集号；本编排器在 Phase 9 发布成功后才调 `bump_episode.py` 递增，期间集号不变。集号单一来源是 `ai-news-digest/config.json`（共享资产枢纽）。
+**集号 claiming**：article-to-solo-podcast 会读集号；本编排器在 Phase 9 发布成功后才调 `bump_episode.py` 递增，期间集号不变。集号单一来源是 `ai-news-digest/config.json`（共享资产枢纽）。
 
 ---
 
