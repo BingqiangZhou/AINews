@@ -16,11 +16,12 @@
   },
   "content": {
     "style": "professional_news",
-    "_note_style": "专业资讯播报取向（客观陈述为主 + 点评判断）。craft.md/rubric.md/agents 据此取向写作与评分，不写闲聊腔。",
-    "min_chars": 1200,
-    "max_chars": 2200,
+    "_note_style": "专业资讯播报取向（快报+深读双层结构：当日多条要闻简讯 + 1 条信息量最充足的深讲；客观陈述为主 + 克制自然判断）。craft.md/rubric.md/agents 据此取向写作与评分，不写闲聊腔。",
+    "min_chars": 1800,
+    "max_chars": 3000,
     "max_para_chars": 80,
-    "target_minutes": "6-10",
+    "target_minutes": "8-12",
+    "_note_chars": "字数/时长对标声动早咖啡双层结构（快报+深读）。深读环节建议占正文 30-40%。上限 3000 字是硬门，validator 拦截。",
     "machine_word_blocklist_extra": [],
     "_note_machine_words": "AI-腔禁用词单一权威源 = article-studio/references/brand-config.md 的 '## 禁用 AI 腔短语'（validate_solo_script.py 运行时解析，与 validate_content_quality.py 同源）。本字段 machine_word_blocklist_extra 仅用于追加该列表之外的补充词，默认为空。"
   },

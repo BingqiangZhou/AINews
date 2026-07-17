@@ -113,7 +113,7 @@ _AI_BUZZWORDS = ["反认知", "反直觉"]
 
 
 def detect_anti_ai(text):
-    """软警告：检测 AI 味套路（三段排比/路标编号/套式连接词反复/AI高频词）。不阻断。"""
+    """软警告：检测 AI 味套路（三段排比/路标编号/套式连接词反复/AI高频词/信源机械句式/点评标签）。不阻断。"""
     warns = []
     # 三段及以上"比…值钱/靠谱"式工整排比（单句内 ≥3 个"比"且含评价词）
     for s in re.split(r"[。！？]", text):
@@ -127,6 +127,14 @@ def detect_anti_ai(text):
     for phrase in ["说到这你可能会问", "好那我们", "接下来我们"]:
         if text.count(phrase) > 1:
             warns.append(f"anti_ai: 套式连接词 '{phrase}' 反复出现")
+    # 信源机械句式反复（"信源是 XX，X月X号"独立成句，全篇 >2 次即套路）
+    source_pattern_hits = len(re.findall(r"信源是.{0,20}[，,]", text))
+    if source_pattern_hits > 2:
+        warns.append(f"anti_ai: 信源机械句式反复（'信源是 XX，'出现 {source_pattern_hits} 次，>2 次为套路；改为自然嵌入'据 XX 报道'，开场统一交代覆盖日期）")
+    # "点评："书面标签残留（应改自然判断句式）
+    dianping_hits = len(re.findall(r"点评：", text))
+    if dianping_hits > 0:
+        warns.append(f"anti_ai: '点评：'书面标签残留 {dianping_hits} 处（改为自然判断句式：'这里值得多看一眼''要我说''换个角度看'）")
     # AI 高频词
     for w in _AI_BUZZWORDS:
         if w in text:

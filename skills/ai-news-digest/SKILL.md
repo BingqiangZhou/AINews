@@ -29,7 +29,7 @@ metadata:
 | `article-studio` | 事实素材 → 公众号日报文章（news 类型，transcript 模式） | skill 委派（结构化字段） |
 | `article-cover-image-generator` | 公众号封面图（900x383） | skill 委派（结构化字段） |
 | `article-illustrator` | 文章插图（两步：prepare + render） | skill 委派（结构化字段） |
-| `article-to-solo-podcast` | 文章 → 单人专业资讯播客音频（客观陈述为主 + 克制点评 + 单音色 clone TTS） | skill 委派（结构化字段） |
+| `article-to-solo-podcast` | 文章 → 单人专业资讯播客音频（快报+深读双层结构 + 客观陈述 + 自然判断 + 单音色 TTS） | skill 委派（结构化字段） |
 | `article-to-video` | 文章+插图+播客 → 横版视频（Ken Burns + 字幕） | 顺序 CLI 脚本 |
 | `browser-publisher` | 三平台草稿发布（公众号 API / 喜马拉雅浏览器 / 抖音浏览器） | skill 委派 |
 
@@ -73,7 +73,7 @@ metadata:
 [Phase 7] 多格式（按 config.media 开关并行委派，默认开封面+播客，关插图+视频）：
    ├─ 7a 封面：article-cover-image-generator → 公众号_封面.png          [cover_enabled]
    ├─ 7b 插图：article-illustrator（prepare → render，回写文章）        [illustrations_enabled, 默认关]
-   ├─ 7c 播客：article-to-solo-podcast（fast_fallback，专业资讯播报）→ _podcast/播客_TTS.mp3（占集号）[tts_podcast_enabled]
+   ├─ 7c 播客：article-to-solo-podcast（fast_fallback，快报+深读双层专业资讯播报）→ _podcast/播客_TTS.mp3（占集号）[tts_podcast_enabled]
    └─ 7d 视频：article-to-video（7b 回写 + 7c 音频完成后）→ _video/公众号_视频.mp4 [video_enabled, 默认关]
    ▼
 [Phase 8] 归档：校验产物 + 图片压缩 + reconcile 一致性
@@ -277,7 +277,7 @@ Phase 6（文章）完成
 
 - **7a 封面**：委派 `article-cover-image-generator` → `公众号_封面.png`（900x383）
 - **7b-prepare 插图**（仅 `illustrations_enabled`）：委派 `article-illustrator`（prompt_only）→ `imgs/segments.json`
-- **7c 播客**（`tts_podcast_enabled`）：委派 `article-to-solo-podcast`，**在委派说明里指示下游 agent 走 fast_fallback**（覆写其 config 的 `studio.enabled` 默认，走 solo-scriptwriter 单写手，产出专业资讯播报稿）→ `_podcast/播客_TTS.mp3`（**占集号**，从本 skill config.json 读 `boker_next_episode`）。插图关闭时无需等 7b-prepare（无 segments.json 依赖）。
+- **7c 播客**（`tts_podcast_enabled`）：委派 `article-to-solo-podcast`，**在委派说明里指示下游 agent 走 fast_fallback**（覆写其 config 的 `studio.enabled` 默认，走 solo-scriptwriter 单写手，产出**快报+深读双层结构**专业资讯播报稿）→ `_podcast/播客_TTS.mp3`（**占集号**，从本 skill config.json 读 `boker_next_episode`）。插图关闭时无需等 7b-prepare（无 segments.json 依赖，但仍产出 `[SECTION:DEEPDIVE]` 深读段）。
 - **7b-render 插图**（仅 `illustrations_enabled`，与 7c 并行）：生图 + 回写文章
 - **7d 视频**（仅 `video_enabled`，7b-render + 7c 完成后）：顺序调 `article-to-video` 的 5 个 CLI 脚本 → `_video/公众号_视频.mp4`
 

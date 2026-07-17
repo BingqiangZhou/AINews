@@ -16,9 +16,9 @@
    - 无 segments.json 或无 illustration_meta → 跳过校验（向下兼容）。
 3. **并行**：`hook-writer`（→ `temp/hooks.txt`）+ `body-writer`（→ `temp/body.txt`），同读 blueprint。
 4. **缝合**（主 agent，机械）：按 blueprint 顺序拼 → `temp/draft_v1.txt`：
-   - 先取 hook-writer 的 `[COLD_OPEN]` + `[BRAND_INTRO]` 段。
-   - 接 body-writer 的 `[BODY]` 段，其中 body-writer 留的 `[MIDHOOK@<位置标>]` 占位行，逐个用 hook-writer 同名 `[MIDHOOK@<位置标>]` 段的内容**替换**（去掉所有 `[...]` 段标记，留纯文本）。
-   - **保留** body-writer 的 `[SECTION:N]` 分节标记——它们是「按插图分段」的结构信号，进最终脚本，TTS 前由 extract_sections 剥离。**只去掉 `[BODY]`/`[CLIMAX]`/`[CTA]`/`[COLD_OPEN]` 等结构性段标记，不去 `[SECTION:N]` 和 `[MIDHOOK@...]`（后者已被替换成内容）。**
+   - 先取 hook-writer 的 `[COLD_OPEN]` + `[BRAND_INTRO]` + `[ROADMAP]` 段。
+   - 接 body-writer 的 `[BODY]` 段（含快报 + 今日深读），其中 body-writer 留的 `[MIDHOOK@<位置标>]` 占位行，逐个用 hook-writer 同名 `[MIDHOOK@<位置标>]` 段的内容**替换**（去掉所有 `[...]` 段标记，留纯文本）。
+   - **保留** body-writer 的 `[SECTION:N]` 和 `[SECTION:DEEPDIVE]` 分节标记——它们是「按插图分段」的结构信号，进最终脚本，TTS 前由 extract_sections 剥离。**只去掉 `[BODY]`/`[CLIMAX]`/`[CTA]`/`[COLD_OPEN]`/`[BRAND_INTRO]`/`[ROADMAP]` 等结构性段标记，不去 `[SECTION:N]`/`[SECTION:DEEPDIVE]` 和 `[MIDHOOK@...]`（后者已被替换成内容）。**
    - 再接 `[CLIMAX]` + `[CTA]`。
    - **二次覆盖校验**：缝合后可再跑一次 `check_illustration_coverage.py --script draft_v1.txt`，确认 body-writer 改写后仍未漏 labels（writers 可能压缩/改写要点）。
 5. **punch-up**（读 draft_v1 + blueprint）→ `temp/draft_v2.txt`。

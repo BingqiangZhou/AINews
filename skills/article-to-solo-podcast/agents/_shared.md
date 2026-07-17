@@ -23,9 +23,16 @@
 
 ## 配置来源
 
-统一从 `config.json` 读取分组：`brand`（品牌/主播身份）、`tts`（mimo 苏打 clone + 分段参数）、`content`（字数/段落；机器词 blocklist 的**单一权威源**在 `article-studio/references/brand-config.md`，本 config 仅 `machine_word_blocklist_extra` 用于追加补充词）、`evaluation`（最大修正轮数/市场可用门槛）、`publishing`（集号真源/bump 脚本）、`environment`（conda_python/ffmpeg/MIMO_API_KEY）。
+统一从 `config.json` 读取分组：`brand`（品牌/主播身份）、`tts`（mimo 冰糖音色 + 分段参数）、`content`（字数 1800-3000 / 段落；双层结构快报+深读；机器词 blocklist 的**单一权威源**在 `article-studio/references/brand-config.md`，本 config 仅 `machine_word_blocklist_extra` 用于追加补充词）、`evaluation`（最大修正轮数/市场可用门槛）、`publishing`（集号真源/bump 脚本）、`environment`（conda_python/ffmpeg/MIMO_API_KEY）。
 
 `<py>` = `config.environment.conda_python`；`<scripts>` = `SCRIPTS_DIR`。
+
+## craft 要点（双层结构，真源见 references/craft.md）
+
+- **双层资讯简报弧线**：开场（点当日最重磅 + 定调）→ 报家门 → **路线图**（亮点条目 + 深读主题）→ **快报**（分节，结论先行，详略起伏）→ **今日深读**（标 `[SECTION:DEEPDIVE]`，首先/其次/最后 + 反向风险）→ 收束 → CTA。
+- **判断机制**：自然判断句式（"这里值得多看一眼""要我说"），**不再用"点评："书面标签**（全篇 ≤3 处，基于已陈述事实）。
+- **信源表达**：自然嵌入，同日不每条报日期，开场统一交代覆盖日期。禁"信源是 XX，X 月 X 号"机械句式反复（全篇 ≤2 次）。
+- **反 AI 味**：禁工整三段排比/套词反复/AI 高频词（自然双元素对比可保留）；允许克制的单点类比讲清抽象概念。
 
 ## 反虚构硬约束（最高优先级）
 

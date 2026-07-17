@@ -79,8 +79,8 @@ def extract_sections(script_text: str) -> dict[int | str, str]:
 
 
 def _parse_section_key(raw: str) -> int | str | None:
-    """解析 section key：整数或 OPENING/ENDING。无法解析 → None。"""
-    if raw in ("OPENING", "ENDING"):
+    """解析 section key：整数或 OPENING/ENDING/DEEPDIVE。无法解析 → None。"""
+    if raw in ("OPENING", "ENDING", "DEEPDIVE"):
         return raw
     try:
         return int(raw)

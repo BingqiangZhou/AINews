@@ -120,17 +120,22 @@
 
 ---
 
-## Phase 7c — 播客：委派 `article-to-solo-podcast`（单人专业资讯播报）
+## Phase 7c — 播客：委派 `article-to-solo-podcast`（单人专业资讯播报 · 快报+深读双层结构）
 
-**职责**：文章 → **单人专业资讯播客**脚本（像《晚点》《硅谷 101》资讯简报：客观陈述为主、信息密度高、关键处给一句精炼"点评："判断）+ 单音色 TTS 音频（clone 苏打）。10 维 rubric（清晰度/节奏/保真，**不奖励闲聊腔**）+ 集号管理。已原生支持文章输入，输出嵌套 `_podcast/`。
+**职责**：文章 → **单人专业资讯播客**脚本（对标《声动早咖啡》《晚点》《硅谷 101》：**快报 + 今日深读双层结构**——多条要闻简讯 + 1 条信息量最充足的深讲，客观陈述为主、信息密度高、关键处给一句精炼**自然判断**）+ 单音色 TTS 音频（MiMo 内置音色冰糖）。10 维 rubric（清晰度/节奏/保真，**不奖励闲聊腔**）+ 集号管理。已原生支持文章输入，输出嵌套 `_podcast/`。
 
 > **默认走 fast_fallback 单写手（非 7-agent studio）**：资讯播报适合"单人简化生成"路径，7-agent studio（为深度打磨的录音场景设计）对日报过度。**本编排器在委派说明里明确指示下游 agent 走 fast_fallback（覆写其自身 config 的 `studio.enabled: true` 默认）**——skill 工作区的跨 skill 意图传递靠委派 prompt，不是 CLI 参数。下游 agent 据此走 solo-scriptwriter 单写手（产出单人专业资讯播报稿，保留 factcheck+judge 防虚构），从 ~9-18 次 LLM 调用降到 ~3 次。
 >
-> **风格取向**：本 skill 的 craft/rubric 已重写为"专业资讯播报"取向（`config.content.style: "professional_news"`）——客观陈述为主、第三人称正常态、关键处"点评："前缀判断（全篇 ≤2-3 处）。不写闲聊腔/夸张/人设态度。
+> **风格取向（快报+深读双层，对标早咖啡）**：本 skill 的 craft/rubric 已重写为"专业资讯播报 · 双层结构"取向（`config.content.style: "professional_news"`）——
+> - 开场 Cold Open + 报家门 + **路线图**（预告亮点条目 + 深读主题）。
+> - **快报**：多条简讯，结论先行，详略起伏，信源自然嵌入（禁"信源是 XX，X 月 X 号"机械句式反复，全篇 ≤2 次）。
+> - **今日深读**：挑 1 条信息量最充足的深讲，标 `[SECTION:DEEPDIVE]`，数据切入 + 背景 + 三维分析（**不用"首先/其次/最后"字面词**，用维度名起句）+ 反向风险批判 + 互动钩子。约占正文 30-40%。素材不足则全快报模式（标 degraded）。
+> - **判断用自然句式**（"这里值得多看一眼""要我说"），**不再用"点评："书面标签**（全篇 ≤2-3 处）。
+> - 字数 1800-3000，时长 8-12 分钟。
 
 ### 前置条件
-- **若 `illustrations_enabled=true`**：需 Phase 7b-prepare 完成（`<article_dir>/imgs/segments.json` 就绪），conductor 读它按 segment 分组要点 + 据 illustration_meta 对齐图内容。
-- **若 `illustrations_enabled=false`（默认）**：无前置，Phase 6 文章完成后即可启动。无 segments.json 时 conductor 退回平铺要点（向下兼容）。
+- **若 `illustrations_enabled=true`**：需 Phase 7b-prepare 完成（`<article_dir>/imgs/segments.json` 就绪），conductor 读它按 segment 分组快报要点 + 据 illustration_meta 对齐图内容。
+- **若 `illustrations_enabled=false`（默认）**：无前置，Phase 6 文章完成后即可启动。无 segments.json 时 conductor 退回平铺要点（向下兼容），**但仍会产出 `[SECTION:DEEPDIVE]` 深读段**（深读不依赖 segments.json，从要闻里选信息量最足的 1 条）。
 
 ### 输入
 
@@ -138,20 +143,20 @@
 |------|----|----|
 | `--input` | `<article_dir>/公众号_文章.md` | 文章（含插图引用无妨，ingest_article.py 会清洗） |
 
-> **委派指令（必须在委派说明里传达给下游 agent）**：`studio_mode: "fast_fallback"` —— 下游 article-to-solo-podcast agent 收到此指令后，**覆写其自身 config.json 的 `studio.enabled` 为 false**（该 config 默认 true，适合深度打磨的录音场景；资讯播报场景须覆写），走 solo-scriptwriter 单写手路径（单人专业资讯播报），不走 7-agent studio。
+> **委派指令（必须在委派说明里传达给下游 agent）**：`studio_mode: "fast_fallback"` —— 下游 article-to-solo-podcast agent 收到此指令后，**覆写其自身 config.json 的 `studio.enabled` 为 false**（该 config 默认 true，适合深度打磨的录音场景；资讯播报场景须覆写），走 solo-scriptwriter 单写手路径（单人专业资讯播报，双层结构），不走 7-agent studio。
 
 article-to-solo-podcast 自动读：
 - `<article_dir>/imgs/segments.json`（Phase 7b-prepare 产出）
 - `ai-news-digest/config.json` 的 `platforms.boker_next_episode`（集号单一来源）
-- `tts-generation` skill（MiMo 合成；**单人用 clone 音色苏打 + voice_ref.wav**）
+- `tts-generation` skill（MiMo 合成；**内置音色冰糖**，不 clone）
 
 ### 输出
 
 | 文件 | 路径 |
 |------|------|
-| 脚本 | `<article_dir>/_podcast/播客_脚本.txt`（单人独白，含 `[SECTION:N]`，无角色标注） |
+| 脚本 | `<article_dir>/_podcast/播客_脚本.txt`（单人独白，含 `[SECTION:N]`/`[SECTION:DEEPDIVE]`，无角色标注） |
 | 标题描述 | `<article_dir>/_podcast/播客_标题与描述.txt` |
-| 音频 | `<article_dir>/_podcast/播客_TTS.mp3`（320k, -16 LUFS, 6-10 min，单音色 clone 苏打） |
+| 音频 | `<article_dir>/_podcast/播客_TTS.mp3`（320k, -16 LUFS, 8-12 min，单音色冰糖） |
 | state | `<article_dir>/_podcast/state.json`（其内部续跑账本） |
 
 ### 并行与集号
