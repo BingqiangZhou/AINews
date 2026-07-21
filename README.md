@@ -95,8 +95,7 @@ export AINews_FONT="C:/Windows/Fonts/msyh.ttc"                 # 可选，视频
 | Skill | 职责 |
 |-------|------|
 | **article-studio** | 核心写作 skill。6 类公众号文章（观点/干货/故事/资讯/人物/测评），双主编并行审查门禁。`transcript` 模式跳过联网检索、把传入文件当作唯一权威源——是编排器之间的核心胶水 |
-| article-cover-image-generator | 公众号封面图（900×383），六维方法论 + 26 个风格预设 |
-| article-illustrator | 文章插图（Type × Style × Palette 三维），两步委派（prepare 产 prompt + 分段定义 → render 生图回写文章） |
+| article-image-studio | 公众号封面图（900×383）+ 文章插图（Type × Style × Palette 三维）一体化编排器，三模式（cover / illustrate / batch）；插图两步委派（prepare 产 prompt + segments.json → render 生图回写文章）；委托 image-generator 出图 |
 
 ### 🔄 格式转换
 | Skill | 职责 |

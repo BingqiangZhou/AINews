@@ -2,7 +2,7 @@
 
 ingest 负责把 Markdown 文章清洗成播客源材料（剥 frontmatter/代码块/图片/
 链接/强调/标题井号，保留正文文字）。分段信息不再由 ingest 负责——改由
-article-illustrator 的 build_segments.py 产出 imgs/segments.json。
+article-image-studio 的 build_segments.py 产出 imgs/segments.json。
 """
 
 import importlib.util

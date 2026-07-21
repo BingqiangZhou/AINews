@@ -53,7 +53,7 @@ ARTICLE_FILE
   --min-illustrations 0
 ```
 
-> `--min-illustrations 0` 是因为本 skill 不生成插图（留给下游 `article-illustrator`），避免恒定 warning 噪声。
+> `--min-illustrations 0` 是因为本 skill 不生成插图（留给下游 `article-image-studio`），避免恒定 warning 噪声。
 > `{merged.X}` 由主 agent 在调用前按上一节"阈值合并"算出后替换为字面数字。
 > ⚠️ **`--max-sections` 不被脚本代码强制**（`validate_content_quality.py` 只检查 `min_sections`，不检查 max）。它仅作 LLM 审查参考——多几个 `##` 主题组不该硬 fail，由内容主编的 structure 维度软性把控。
 
@@ -245,8 +245,7 @@ else:
    - 最终 verdict、两家 overall、各家维度分
    - 若 `pass with notes`：列出两家未解决的 notes
 3. **明确告知后续步骤需手动调其他 skill**：
-   - 配图 → `article-illustrator`
-   - 封面 → `article-cover-image-generator`
+   - 配图/封面 → `article-image-studio`（illustrate 模式 / cover 模式）
    - 公众号草稿 → `browser-publisher`（先按其 wechat-mp.md 检查 `>` 引用块等规范）
    - 播客 → `article-to-solo-podcast`
 4. `state.json.phase = "editor_passed"`

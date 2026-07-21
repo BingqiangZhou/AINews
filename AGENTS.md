@@ -22,8 +22,7 @@ Each skill folder follows the same shape: `SKILL.md` (frontmatter + flow) + `con
 |-------|------|
 | **ai-news-digest** | The only orchestrator (`metadata.orchestrator: true`). RSS → score → factual material → delegates all content production + publish. Entry point: `/ai-news-digest`. Also owns the shared `config.json` (brand/cover/image/tts/`platforms.boker_next_episode`) + pipeline helpers (`backup_file.py`, `bump_episode.py`, `compress_images.py`, `reconcile_media.py`) + `agents/_shared_base.md`. |
 | **article-studio** | Central writing skill. Any 公众号 article type; `transcript` mode = skip web research, source file is sole authority. Owns `references/brand-config.md` (brand voice + banned-phrase single source) + `scripts/validate_content_quality.py`. |
-| article-cover-image-generator | Cover image (900x383). |
-| article-illustrator | Article illustrations (prepare → render, rewrites `![]()` into article). |
+| article-image-studio | Cover image (900x383) **+** article illustrations (prepare → render, rewrites `![]()` into article). Unified three-mode orchestrator (cover / illustrate / batch); three-dimension methodology (Type × Style × Palette); delegates raster to `image-generator`. |
 | article-to-solo-podcast | Article → **single-host professional news podcast** (《晚点》/《硅谷 101》-style资讯播报) + single-voice TTS. Claims episode number. |
 | article-to-video | Article + illustrations + podcast → landscape video (5 sequential CLI scripts). |
 | **browser-publisher** | Owns **ALL** publishing logic. Never rewrite publish code elsewhere; always delegate here. |

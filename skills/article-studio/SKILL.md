@@ -7,7 +7,7 @@ description: >
   再用**双主编并行审查**（内容主编 5 维度+红线卡事实/分寸，读者代表 3 维度卡阅读体验/获得感），
   输出通过审查的公众号_文章.md。**触发场景**：用户说"写一篇公众号文章"、给主题+立场/素材要写公众号、
   或需要"有主编把关"的文章时使用。本 skill 按类型路由写带声音的公众号文（止步审查通过）。
-  **不编排**配图/封面/发布/播客（由用户后续手动调 article-illustrator / article-cover-image-generator /
+  **不编排**配图/封面/发布/播客（由用户后续手动调 article-image-studio（封面 + 配图）/
   browser-publisher / article-to-solo-podcast）。
   **transcript 模式**：被编排器（如 ai-news-digest）调用时，输入可是一段录音转录文本（`source_mode: transcript`），
   此时跳过联网检索、转录为唯一权威源、零外部事实，把口语转录改写为书面公众号文。
@@ -57,7 +57,7 @@ metadata:
 ## 与相邻 skill 的边界
 
 **本 skill 不编排**：配图/封面/草稿上传/播客/喜马拉雅。审查通过后，用户手动调对应 skill：
-- 配图/封面 → `article-illustrator` / `article-cover-image-generator`
+- 配图/封面 → `article-image-studio`（cover 模式出封面、illustrate 模式出配图）
 - 公众号草稿上传 → `browser-publisher`
 - 播客 → `article-to-solo-podcast`
 
@@ -147,7 +147,7 @@ articles/{YYYY-MM-DD}_{标题}/
 ├── _research/
 │   └── 事实素材与来源.md        # 事实底座（stance_research=联网检索带 URL；transcript=转录原文，无 URL）
 ├── prompts/                    # 审查标准、写作 prompt 备份（含 content-editor/reader 两家）
-├── imgs/ + imgs/prompts/       # 预留给后续 article-illustrator（本 skill 不填）
+├── imgs/ + imgs/prompts/       # 预留给后续 article-image-studio（illustrate 模式，本 skill 不填）
 ├── scorecards/
 │   ├── content-round-N.json    # 内容主编审查 traceability（5 维度 + 红线）
 │   └── reader-round-N.json     # 读者代表审查 traceability（3 维度阅读体验）

@@ -1,7 +1,7 @@
 """
 check_illustration_coverage.py — 校验播客文本是否覆盖了每段插图的 labels。
 
-这是「确保播客和插图内容对应」的显式校验机制。article-illustrator 的每张图（非 scene
+这是「确保播客和插图内容对应」的显式校验机制。article-image-studio 的每张图（非 scene
 类型）在 prompt frontmatter 记录了 title_text/labels（图内要画的具体中文字），这些通过
 segments.json 的 illustration_meta 字段传递到下游。conductor 规划蓝图时被要求覆盖所有
 labels，body-writer 写正文时也应呼应这些标签。

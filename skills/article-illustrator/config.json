@@ -1,9 +1,0 @@
-{
-  "environment": {
-    "conda_python": "python"
-  },
-  "illustration": {
-    "image_backend": "agnes",
-    "fallback_to_agnes": false
-  }
-}

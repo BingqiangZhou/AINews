@@ -1,0 +1,36 @@
+{
+  "_note": "本 skill 遵循 AINews 单一来源约定：跨 skill 共享字段（cover 后端、environment）优先读 ../ai-news-digest/config.json，本 config 仅作独立运行时的 fallback 与本地偏好（三维默认偏好、palette=warm 锁、size profile）。",
+  "environment": {
+    "conda_python": "python",
+    "chrome_download_dir": ""
+  },
+  "backend": {
+    "_note": "provider/model/gaoding_model/jimeng_model 与 ai-news-digest/config.json#cover 保持手动同步（cover 后端单一来源是 ai-news-digest）。本字段仅 fallback。",
+    "provider": "agnes",
+    "gaoding_model": "万相2.7",
+    "jimeng_model": "图片 4.7",
+    "model": "agnes-image-2.1-flash",
+    "fallback_to_agnes": false
+  },
+  "cover": {
+    "default_size_profile": "wechat-cover",
+    "type": "auto",
+    "palette": "warm",
+    "rendering": "hand-drawn",
+    "text": "none",
+    "mood": "auto",
+    "font": "handwritten"
+  },
+  "preferences": {
+    "default_type": "auto",
+    "default_palette": "warm",
+    "default_rendering": "hand-drawn",
+    "default_text": "none",
+    "default_mood": "balanced",
+    "default_font": "handwritten",
+    "default_aspect": "2.35:1",
+    "language": "auto",
+    "disabled_presets": [],
+    "preferred_palettes": []
+  }
+}

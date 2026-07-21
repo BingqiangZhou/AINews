@@ -48,9 +48,9 @@
 
 ---
 
-## Phase 7a — 封面：委派 `article-cover-image-generator`（全量模式）
+## Phase 7a — 封面：委派 `article-image-studio`（cover 模式）
 
-**职责**：标题+核心论点 → 公众号封面（900x383）。全量模式内部再委派 `image-generator` 出图（Gaoding 后端）。
+**职责**：标题+核心论点 → 公众号封面（900x383）。cover 模式内部再委派 `image-generator` 出图（backend 由 `cover.provider` 决定）。
 
 ### 输入（结构化）
 
@@ -60,8 +60,8 @@
 | `target_size` | `"900x383"` | 公众号封面尺寸（ai-news-digest config `image.cover_size`） |
 | `output_path` | `<article_dir>/公众号_封面.png` | 固定文件名（browser-publisher 契约） |
 | `output_dir` | `<article_dir>` | prompts/ 与产物落此处 |
-| `visual_preset` | `auto` | auto-mapping（仅影响封面 type/mood；封面 palette/rendering/font 已固定为 hand-drawn-edu 预设 + 手写字体，见 article-cover-image-generator 规则 #14） |
-| `cover_provider` | `gaoding` | gaoding / jimeng / agnes；默认 Gaoding，不回退 Agnes（ai-news-digest config `cover.provider`） |
+| `visual_preset` | `auto` | auto-mapping（仅影响封面 type/mood；封面 palette/rendering/font 已固定为 warm + hand-drawn + handwritten，见 article-image-studio 规则 #14「Palette 全局锁 warm」） |
+| `cover_provider` | `agnes`（当前 config） | gaoding / jimeng / agnes；不回退（fallback 受 `backend.fallback_to_agnes` 控制，默认 false，ai-news-digest config `cover.provider`） |
 
 ### 输出
 
@@ -74,9 +74,9 @@
 
 ---
 
-## Phase 7b — 插图：委派 `article-illustrator`（两步：prepare + render）
+## Phase 7b — 插图：委派 `article-image-studio`（illustrate 模式，两步：prepare + render）
 
-> **由 `config.media.illustrations_enabled` 控制，日报默认关闭**。清单是可扫读文本，插图增益低且每张需 Gaoding 浏览器自动化；用户可在启动前通过 `config.media.illustrations_enabled` 或对话显式开启。插图关闭时 Phase 7c 播客不再依赖 segments.json（见 7c 前置条件）。
+> **由 `config.media.illustrations_enabled` 控制，日报默认关闭**。清单是可扫读文本，插图增益低且每张需 backend 浏览器自动化；用户可在启动前通过 `config.media.illustrations_enabled` 或对话显式开启。插图关闭时 Phase 7c 播客不再依赖 segments.json（见 7c 前置条件）。
 
 **职责**：决定插图位置+内容并生成图片。拆成两步委派，消除 conductor 与 segments.json 的隐藏竞态（Phase 7c 的 conductor 依赖 segments.json）。
 
@@ -86,11 +86,11 @@
 
 | 字段 | 值 | 说明 |
 |------|----|----|
-| 文章路径 | `<article_dir>/公众号_文章.md` | illustrator 读 `<!-- illustration -->` 占位符位置 |
-| `visual_preset` | `auto` | auto-mapping 到 illustrator preset |
+| 文章路径 | `<article_dir>/公众号_文章.md` | article-image-studio 读 `<!-- illustration -->` 占位符位置 |
+| `visual_preset` | `auto` | auto-mapping 到 illustrate preset（knowledge-card→knowledge, cozy-story→narrative, bold-warning→analysis, minimal-opinion→analysis） |
 | `density` | `balanced`（3-5 张） | 可按文章长度调 |
 | `prompt_only` | `true` | 产出 prompt + segments.json 后返回，不生图 |
-| output dir | `<article_dir>/imgs/` | illustrator 原生产物目录 |
+| output dir | `<article_dir>/imgs/` | article-image-studio 原生产物目录 |
 
 ### 输出（7b-prepare）
 
@@ -104,8 +104,8 @@
 
 **职责**：从 7b-prepare 的断点续跑，生成 PNG + 回写文章。
 
-- **方式 A**（推荐）：再次委派 `article-illustrator`，它检测到 prompt 文件已存在则续跑（生图 + 回写）。
-- **方式 B**：批量委派 `article-cover-image-generator` 生成所有 PNG，再由 illustrator 回写。
+- **方式 A**（推荐）：再次委派 `article-image-studio`（illustrate 模式），它检测到 prompt 文件已存在则续跑（生图 + 回写）。
+- **方式 B**：批量委派 `article-image-studio`（batch 模式）生成所有 PNG，再回写文章。
 
 ### 输出（7b-render）
 

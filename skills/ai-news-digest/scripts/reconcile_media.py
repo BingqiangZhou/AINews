@@ -75,7 +75,7 @@ def verify_prompt_hashes(
 
     Supports both v3 (phase6.generate.*) and v4 (stages.media.*) state schemas.
     In v4 (pure-orchestrator), prompt hashes are owned by the downstream
-    illustrator skill, so the orchestrator state has none and this is a no-op.
+    image skill (article-image-studio), so the orchestrator state has none and this is a no-op.
     """
     generate = state.get("phase6", {}).get("generate", {})
     if not generate:

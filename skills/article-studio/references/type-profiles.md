@@ -207,7 +207,7 @@
 [结尾] 1-2 句追更 CTA（"关注追更明日日报"）。不做趋势归纳散文。
 ```
 
-> **结构硬约束（下游兼容）**：主体必须用 `##` 分主题组（article-illustrator 的 `build_segments.py` 用 `^##\s+` 正则切分 segment，播客 conductor 按 `##` 分 `[SECTION:N]`，视频 plan_scenes 继承 segment）。每条资讯用 `###` 标题。不可降级为纯 bullet 无 `##`。
+> **结构硬约束（下游兼容）**：主体必须用 `##` 分主题组（article-image-studio 的 `build_segments.py` 用 `^##\s+` 正则切分 segment，播客 conductor 按 `##` 分 `[SECTION:N]`，视频 plan_scenes 继承 segment）。每条资讯用 `###` 标题。不可降级为纯 bullet 无 `##`。
 
 **盘点文模式**（`source_mode: stance_research`，或清单模式关闭时）—— 散文盘点，保留通用写作能力：
 

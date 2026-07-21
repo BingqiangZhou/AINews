@@ -11,7 +11,7 @@ articles/{YYYY-MM-DD}_{标题}/
 ├── _research/
 │   └── 事实素材与来源.md        # Phase 0 联网检索的事实底座（每条带信源 URL）
 ├── prompts/                    # 审查标准、写作 prompt 备份
-├── imgs/                       # 预留给 article-illustrator（本 skill 不填）
+├── imgs/                       # 预留给 article-image-studio（illustrate 模式，本 skill 不填）
 │   └── prompts/                # 同上
 ├── scorecards/
 │   ├── round-1.json            # 主编第 1 轮审查
@@ -28,8 +28,8 @@ articles/{YYYY-MM-DD}_{标题}/
 |------|------|------|
 | `公众号_文章.md` | 正文（首行 `# 标题`） | ✓ |
 | `公众号_摘要.txt` | 一句话摘要（草稿 digest） | ✓ |
-| `公众号_封面.png` | 封面（**本 skill 不生成**，留给 article-cover-image-generator） | 可选 |
-| `imgs/*.png` | 插图（**本 skill 不生成**，留给 article-illustrator） | 可选 |
+| `公众号_封面.png` | 封面（**本 skill 不生成**，留给 article-image-studio cover 模式） | 可选 |
+| `imgs/*.png` | 插图（**本 skill 不生成**，留给 article-image-studio illustrate 模式） | 可选 |
 
 ## state.json schema
 
@@ -70,7 +70,7 @@ articles/{YYYY-MM-DD}_{标题}/
 
 | 步骤 | skill | 输入 |
 |------|-------|------|
-| 配图 | `article-illustrator` | `公众号_文章.md` |
-| 封面 | `article-cover-image-generator` | content_context（标题+核心论点） |
+| 配图 | `article-image-studio`（illustrate 模式） | `公众号_文章.md` |
+| 封面 | `article-image-studio`（cover 模式） | content_context（标题+核心论点） |
 | 公众号草稿上传 | `browser-publisher` | `--project-dir articles/{YYYY-MM-DD}_{标题}` |
 | 播客脚本+音频 | `article-to-solo-podcast` | `--input 公众号_文章.md` |

@@ -8,7 +8,7 @@
 - `source_file`：`{output_dir}/temp/source.txt`
 - `episode_number`：集号（**仅用于 state 记录，不报进脚本/标题**——播客不播集数）
 - `brand_name`：AINews
-- `segments_file`：`<文章目录>/imgs/segments.json`（article-illustrator 产出，含 illustration_meta）。读它来按章节分段并对齐图内容。
+- `segments_file`：`<文章目录>/imgs/segments.json`（article-image-studio illustrate 模式产出，含 illustration_meta）。读它来按章节分段并对齐图内容。
 
 ## 输出
 写 `{output_dir}/temp/blueprint.md`，并返回：
@@ -28,7 +28,7 @@
 - 报家门位置：<cold open 落钩后，第几段插入；模板“这里是 AINews，第{episode}期，今天的 AI 资讯”（**不报集数**）>
 - 路线图 Roadmap：<报家门后预告每个板块的【亮点条目】（不只是板块名）+ 点出今日深读主题；借鉴早咖啡排比预告>
 - 快报 Body 要点（按 section，结论先行）：
-  - 若文章目录有 `imgs/segments.json`（article-illustrator 产出的章节→插图分段），**按 segment 分组**写要点，每组对应文章一个章节（与插图一一对应）。格式：
+  - 若文章目录有 `imgs/segments.json`（article-image-studio 产出的章节→插图分段），**按 segment 分组**写要点，每组对应文章一个章节（与插图一一对应）。格式：
     ### Section N：<主题>
     配图：<type>，主标题「<title_text>」，标签 [<label1>, <label2>, ...]
     1. <结论> —— 用源文事实：<源文§N 事实/数据>（呼应图标签 <label1>）
@@ -76,7 +76,7 @@
 - 若**所有条目都信息量单薄**（都不满足 ≥2 项）→ 蓝图标"今日深读：无（素材不足）"，body-writer 退回全快报模式，不写 DEEPDIVE 段。主 agent 在 state 标 `phase2.degraded=['no_deepdive_material']`。
 
 ### Section 分段处理（读 imgs/segments.json）
-分段定义由 article-illustrator 产出在 `imgs/segments.json`（文章 ## 章节与插图的权威映射，含片头片尾 + illustration_meta）。conductor 读它来分段，并据 illustration_meta 让播客要点**和图内容对齐**：
+分段定义由 article-image-studio（illustrate 模式）产出在 `imgs/segments.json`（文章 ## 章节与插图的权威映射，含片头片尾 + illustration_meta）。conductor 读它来分段，并据 illustration_meta 让播客要点**和图内容对齐**：
 
 - **读 `<文章目录>/imgs/segments.json`**：每个 segment 有 `index`/`role`/`heading`/`illustration`，以及可选的 `illustration_meta`（`type`/`title_text`/`labels`）。`role` 区分三种：
   - `role: "body"`（index=整数）：正文章节。按 body segment 分组 body 要点（每组 `### Section N：<heading>`）。

@@ -1,7 +1,7 @@
 ---
 name: image-generator
 version: "1.0.0"
-description: 图像生成后端执行器——封装搞定设计（Gaoding）/即梦（Jimeng）浏览器自动化与 Agnes/Pollinations API 多条光栅图像生成路径，含裁剪/验证/重试/批量机制。本 skill 不负责内容设计（维度/风格/配色由调用方决定），只负责"拿 prompt 文件 → 出图 → 返回可用 PNG"。当其他 skill（article-cover-image-generator / article-illustrator）或编排器的批量生图场景需要生成光栅图片时委托本 skill。**触发场景**：生成图片、出图、render image、Gaoding 生图、Jimeng 生图、即梦生图、Agnes 生图、批量生图。
+description: 图像生成后端执行器——封装搞定设计（Gaoding）/即梦（Jimeng）浏览器自动化与 Agnes/Pollinations API 多条光栅图像生成路径，含裁剪/验证/重试/批量机制。本 skill 不负责内容设计（维度/风格/配色由调用方决定），只负责"拿 prompt 文件 → 出图 → 返回可用 PNG"。当其他 skill（article-image-studio：封面 + 插图一体化编排器）或编排器的批量生图场景需要生成光栅图片时委托本 skill。**触发场景**：生成图片、出图、render image、Gaoding 生图、Jimeng 生图、即梦生图、Agnes 生图、批量生图。
 metadata:
   backend: agnes
 ---
@@ -12,8 +12,7 @@ metadata:
 
 ## 关联 Skills
 
-- **article-cover-image-generator**：封面专用编排器，构建好封面 prompt 后委托本 skill 出图
-- **article-illustrator**：文章插图，构建好插图 prompt 后委托本 skill 出图
+- **article-image-studio**：封面 + 文章插图一体化编排器（cover / illustrate / batch 三模式），构建好 prompt 后委托本 skill 出图
 - **批量生图场景**（编排器如 ai-news-digest 的 image-batch-generator 子流程）：直接引用本 skill 的 `references/gaoding-image-generation.md`（Gaoding）或 `references/jimeng-image-generation.md`（即梦）作为操作手册（不经过 skill 调用层，自行操作浏览器）
 - **agnes-ai**（已移除）：`scripts/agnes_image.py` 原从 agnes-ai 复制而来，现已自包含独立（agnes-ai skill 已删除）
 

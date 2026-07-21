@@ -134,7 +134,7 @@ def build_research_md(data: dict, persona: str, date: str) -> str:
     lines.append("")
     lines.append("### 结构硬约束（下游兼容）")
     lines.append("- 清单主体必须用 `##` 分主题组（本文件的 `## 一、xxx` 分组可直接保留/重命名）。")
-    lines.append("- 原因：article-illustrator 的 build_segments.py 用 `^##\\s+` 正则切分插图 segment，播客 conductor 按 `##` 分 `[SECTION:N]`，视频 plan_scenes 继承 segment。降级为纯 bullet 无 `##` 会断下游。")
+    lines.append("- 原因：article-image-studio 的 build_segments.py 用 `^##\\s+` 正则切分插图 segment，播客 conductor 按 `##` 分 `[SECTION:N]`，视频 plan_scenes 继承 segment。降级为纯 bullet 无 `##` 会断下游。")
     lines.append("")
 
     return "\n".join(lines)
